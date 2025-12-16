@@ -118,15 +118,24 @@ class _PolygonsManagementScreenState extends State<PolygonsManagementScreen> {
               }
 
               try {
-                // Parser les coordonnées JSON
-                final coordinates = (coordinatesController.text
-                    .replaceAll(RegExp(r'\s+'), '')
-                    .replaceAll('[', '')
-                    .replaceAll(']', '')
-                    .split('),(')
-                    .map((e) => e.replaceAll('(', '').replaceAll(')', '').split(','))
-                    .map((e) => [double.parse(e[0]), double.parse(e[1])])
-                    .toList()) as List<List<double>>;
+                // Parser les coordonnées JSON simple
+                // Format attendu: [[lon1, lat1], [lon2, lat2], ...]
+                final text = coordinatesController.text.trim();
+                final cleaned = text.replaceAll(RegExp(r'\s+'), '');
+                
+                // Extraire les coordonnées avec regex
+                final regex = RegExp(r'\[([-\d.]+),\s*([-\d.]+)\]');
+                final matches = regex.allMatches(cleaned);
+                
+                if (matches.isEmpty) {
+                  throw Exception('Format de coordonnées invalide');
+                }
+                
+                final coordinates = matches.map((match) {
+                  final lon = double.parse(match.group(1)!);
+                  final lat = double.parse(match.group(2)!);
+                  return [lon, lat];
+                }).toList();
 
                 final provider = Provider.of<OpenWeatherPolygonProvider>(context, listen: false);
                 await provider.createPolygon(
