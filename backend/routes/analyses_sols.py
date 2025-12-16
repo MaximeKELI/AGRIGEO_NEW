@@ -9,16 +9,18 @@ from models.analyse_sol import AnalyseSol
 from models.exploitation import Exploitation
 from utils.historique import log_action
 from utils.validators import validate_analyse_sol_data
+from routes.utils import get_pagination_params, paginate_query
 
 analyses_sols_bp = Blueprint('analyses_sols', __name__)
 
 @analyses_sols_bp.route('', methods=['GET'])
 @jwt_required()
 def get_analyses():
-    """Liste toutes les analyses de sol"""
+    """Liste toutes les analyses de sol avec pagination"""
     try:
-        exploitation_id = request.args.get('exploitation_id')
-        parcelle_id = request.args.get('parcelle_id')
+        exploitation_id = request.args.get('exploitation_id', type=int)
+        parcelle_id = request.args.get('parcelle_id', type=int)
+        page, per_page = get_pagination_params()
         
         query = AnalyseSol.query
         
@@ -27,8 +29,11 @@ def get_analyses():
         if parcelle_id:
             query = query.filter_by(parcelle_id=parcelle_id)
         
-        analyses = query.all()
-        return jsonify([a.to_dict() for a in analyses]), 200
+        # Tri par date de prélèvement décroissante
+        query = query.order_by(AnalyseSol.date_prelevement.desc())
+        
+        result = paginate_query(query, page, per_page)
+        return jsonify(result), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
