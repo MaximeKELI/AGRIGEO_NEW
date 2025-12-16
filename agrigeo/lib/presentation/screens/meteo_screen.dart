@@ -54,6 +54,15 @@ class _MeteoScreenState extends State<MeteoScreen> {
       appBar: AppBar(
         title: const Text('Météo'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ConfigMeteoScreen()),
+              );
+            },
+            tooltip: 'Configuration',
+          ),
           if (exploitation != null && exploitation!.latitude != null && exploitation!.longitude != null)
             IconButton(
               icon: const Icon(Icons.refresh),
@@ -66,8 +75,43 @@ class _MeteoScreenState extends State<MeteoScreen> {
             ),
         ],
       ),
-      body: exploitation == null || exploitation!.latitude == null || exploitation!.longitude == null
-          ? const Center(
+      body: FutureBuilder<String?>(
+        future: SharedPreferences.getInstance().then((prefs) => prefs.getString(AppConstants.openWeatherApiKey)),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData || snapshot.data == null) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.key_off, size: 64, color: Colors.grey),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Clé API requise',
+                    style: TextStyle(fontSize: 18, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Veuillez configurer votre clé API OpenWeather',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const ConfigMeteoScreen()),
+                      );
+                    },
+                    icon: const Icon(Icons.settings),
+                    label: const Text('Configurer'),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          if (exploitation == null || exploitation!.latitude == null || exploitation!.longitude == null) {
+            return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -85,7 +129,16 @@ class _MeteoScreenState extends State<MeteoScreen> {
                   ),
                 ],
               ),
-            )
+            );
+          }
+
+          return _buildMeteoContent(exploitation!);
+        },
+      ),
+    );
+  }
+
+  Widget _buildMeteoContent(ExploitationModel exploitation) {
           : Consumer<MeteoProvider>(
               builder: (context, provider, _) {
                 if (provider.isLoading && provider.meteoActuelle == null) {
