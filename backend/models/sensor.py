@@ -58,14 +58,14 @@ class SensorData(db.Model):
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     battery_level = db.Column(db.Integer)
     signal_strength = db.Column(db.Integer)  # dBm
-    metadata = db.Column(db.Text)  # JSON
+    sensor_metadata = db.Column(db.Text)  # JSON (renommé car 'metadata' est réservé dans SQLAlchemy)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     def to_dict(self):
         metadata_dict = None
-        if self.metadata:
+        if self.sensor_metadata:
             try:
-                metadata_dict = json.loads(self.metadata)
+                metadata_dict = json.loads(self.sensor_metadata)
             except:
                 metadata_dict = None
         
@@ -82,7 +82,7 @@ class SensorData(db.Model):
             'timestamp': self.timestamp.isoformat() if self.timestamp else None,
             'battery_level': self.battery_level,
             'signal_strength': self.signal_strength,
-            'metadata': metadata_dict,
+            'metadata': metadata_dict,  # On garde 'metadata' dans le JSON de sortie
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
 

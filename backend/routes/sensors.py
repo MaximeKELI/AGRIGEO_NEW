@@ -44,7 +44,7 @@ def receive_sensor_data():
             timestamp=datetime.fromisoformat(data['timestamp'].replace('Z', '+00:00')) if data.get('timestamp') else datetime.utcnow(),
             battery_level=data.get('battery_level'),
             signal_strength=data.get('signal_strength'),
-            metadata=json.dumps(data.get('metadata', {})) if data.get('metadata') else None
+            sensor_metadata=json.dumps(data.get('metadata', {})) if data.get('metadata') else None
         )
         
         db.session.add(sensor_data)
