@@ -123,9 +123,9 @@ Réponds toujours en français et de manière professionnelle et pédagogique.
         },
       };
 
-      // Appel à l'API Gemini (utiliser gemini-2.5-flash qui est disponible)
+      // Appel à l'API Gemini (utiliser gemini-1.5-flash qui est disponible)
       final response = await _dio.post(
-        '$_baseUrl/models/gemini-2.5-flash:generateContent?key=$_apiKey',
+        '$_baseUrl/models/gemini-1.5-flash:generateContent?key=$_apiKey',
         data: requestData,
         options: Options(
           headers: {'Content-Type': 'application/json'},
