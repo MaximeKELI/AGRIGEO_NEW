@@ -201,7 +201,6 @@ Réponds UNIQUEMENT en JSON valide, sans texte supplémentaire.
 ''';
 
       case AnalysisType.general:
-      default:
         return '''
 Analyse cette image agricole de manière complète.
 Détecte:
