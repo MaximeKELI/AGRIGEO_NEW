@@ -15,6 +15,7 @@ import 'image_analysis_screen.dart';
 import 'add_exploitation_screen.dart';
 import 'add_analyse_sol_screen.dart';
 import 'add_intrant_screen.dart';
+import 'exploitation_detail_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
