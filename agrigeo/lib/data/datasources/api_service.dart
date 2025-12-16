@@ -172,6 +172,92 @@ class ApiService {
     }
   }
 
+  // Sensors endpoints
+  Future<Response> getSensors({
+    int? exploitationId,
+    int? parcelleId,
+    String? sensorType,
+    bool? isActive,
+  }) async {
+    try {
+      await _addAuthHeader();
+      final queryParams = <String, dynamic>{};
+      if (exploitationId != null) queryParams['exploitation_id'] = exploitationId;
+      if (parcelleId != null) queryParams['parcelle_id'] = parcelleId;
+      if (sensorType != null) queryParams['sensor_type'] = sensorType;
+      if (isActive != null) queryParams['is_active'] = isActive;
+      final response = await _dio.get(ApiConstants.sensors, queryParameters: queryParams);
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Response> getSensor(int sensorId) async {
+    try {
+      await _addAuthHeader();
+      final response = await _dio.get('${ApiConstants.sensors}/$sensorId');
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Response> createSensor(Map<String, dynamic> data) async {
+    try {
+      await _addAuthHeader();
+      final response = await _dio.post(ApiConstants.sensors, data: data);
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Response> updateSensor(int sensorId, Map<String, dynamic> data) async {
+    try {
+      await _addAuthHeader();
+      final response = await _dio.put('${ApiConstants.sensors}/$sensorId', data: data);
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Response> getSensorData({
+    String? sensorId,
+    String? sensorType,
+    int? exploitationId,
+    int? parcelleId,
+    String? startDate,
+    String? endDate,
+  }) async {
+    try {
+      await _addAuthHeader();
+      final queryParams = <String, dynamic>{};
+      if (sensorId != null) queryParams['sensor_id'] = sensorId;
+      if (sensorType != null) queryParams['sensor_type'] = sensorType;
+      if (exploitationId != null) queryParams['exploitation_id'] = exploitationId;
+      if (parcelleId != null) queryParams['parcelle_id'] = parcelleId;
+      if (startDate != null) queryParams['start_date'] = startDate;
+      if (endDate != null) queryParams['end_date'] = endDate;
+      final response = await _dio.get(ApiConstants.sensorData, queryParameters: queryParams);
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Response> sendSensorData(Map<String, dynamic> data) async {
+    try {
+      // Pas besoin d'authentification pour recevoir les données des capteurs
+      // (peut être sécurisé avec une API key)
+      final response = await _dio.post(ApiConstants.sensorData, data: data);
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   // Intrants endpoints
   Future<Response> getIntrants({int? exploitationId, int? parcelleId}) async {
     try {
