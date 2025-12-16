@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:geolocator/geolocator.dart';
 import '../providers/location_provider.dart';
-import '../../data/models/user_location_model.dart';
 
 /// Widget pour afficher la localisation de l'utilisateur en temps réel
 class LocationDisplayWidget extends StatefulWidget {
