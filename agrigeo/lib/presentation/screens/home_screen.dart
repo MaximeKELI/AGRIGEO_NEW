@@ -11,7 +11,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Configurer la clé API Gemini au démarrage
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ChatProvider>(context, listen: false).setApiKey('AIzaSyCwt5NygybBr9oasALOG7Ht-XhM2Dk-sIk');
+      Provider.of<ChatProvider>(context, listen: false).setApiKey('AIzaSyABPjT80rKdL1WFSCsEyUJehFgUP8PMnrY');
       Provider.of<ExploitationProvider>(context, listen: false).loadExploitations();
     });
     

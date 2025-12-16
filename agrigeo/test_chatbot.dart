@@ -5,10 +5,10 @@ import 'package:dio/dio.dart';
 
 void main() async {
   print('🤖 Test du Chatbot AGRIGEO - API Gemini\n');
-  print('=' * 50);
+  print('='.padRight(50, '='));
   
   // Clé API depuis home_screen.dart
-  const apiKey = 'AIzaSyCwt5NygybBr9oasALOG7Ht-XhM2Dk-sIk';
+  const apiKey = 'AIzaSyABPjT80rKdL1WFSCsEyUJehFgUP8PMnrY';
   const baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
   
   final dio = Dio();
@@ -58,11 +58,11 @@ Réponds toujours en français et de manière professionnelle et pédagogique.
     };
 
     print('🔄 Appel à l\'API Gemini...');
-    print('URL: $baseUrl/models/gemini-1.5-flash:generateContent\n');
+    print('URL: $baseUrl/models/gemini-2.5-flash:generateContent\n');
 
     // Appel à l'API
     final response = await dio.post(
-      '$baseUrl/models/gemini-1.5-flash:generateContent?key=$apiKey',
+      '$baseUrl/models/gemini-2.5-flash:generateContent?key=$apiKey',
       data: requestData,
       options: Options(
         headers: {'Content-Type': 'application/json'},
@@ -127,11 +127,11 @@ Réponds toujours en français et de manière professionnelle et pédagogique.
 
     // Afficher le succès
     print('✅ SUCCÈS ! Le chatbot fonctionne correctement.\n');
-    print('=' * 50);
+    print('='.padRight(50, '='));
     print('\n📨 Réponse du chatbot:\n');
-    print('─' * 50);
+    print('─'.padRight(50, '─'));
     print(textPart.toString());
-    print('─' * 50);
+    print('─'.padRight(50, '─'));
     print('\n✅ Test réussi ! Le chatbot est opérationnel.\n');
 
   } on DioException catch (e) {
@@ -156,4 +156,3 @@ Réponds toujours en français et de manière professionnelle et pédagogique.
     exit(1);
   }
 }
-

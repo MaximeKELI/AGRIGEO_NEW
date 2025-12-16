@@ -11,7 +11,7 @@ class GeminiVisionService {
 
   GeminiVisionService({Dio? dio, String? apiKey})
       : _dio = dio ?? Dio(),
-        _apiKey = apiKey ?? 'AIzaSyCwt5NygybBr9oasALOG7Ht-XhM2Dk-sIk';
+        _apiKey = apiKey ?? 'AIzaSyABPjT80rKdL1WFSCsEyUJehFgUP8PMnrY';
 
   /// Configure la clé API
   void setApiKey(String apiKey) {

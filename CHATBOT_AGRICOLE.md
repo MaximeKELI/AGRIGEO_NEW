@@ -9,7 +9,7 @@ Un chatbot IA spécialisé exclusivement en agriculture, utilisant l'API Gemini 
 ### Clé API Gemini
 
 La clé API est déjà configurée dans le code :
-- Clé : `AIzaSyCwt5NygybBr9oasALOG7Ht-XhM2Dk-sIk`
+- Clé : `AIzaSyABPjT80rKdL1WFSCsEyUJehFgUP8PMnrY`
 - Configurée automatiquement au démarrage de l'application
 
 ## 🎯 Fonctionnalités
