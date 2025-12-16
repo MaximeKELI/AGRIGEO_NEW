@@ -1,18 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/meteo_provider.dart';
 import '../providers/exploitation_provider.dart';
 import '../../data/models/exploitation_model.dart';
+import '../../core/constants/app_constants.dart';
 import 'conseils_irrigation_screen.dart';
+import 'config_meteo_screen.dart';
 
-class MeteoScreen extends StatelessWidget {
+class MeteoScreen extends StatefulWidget {
   final ExploitationModel? exploitation;
 
   const MeteoScreen({
     super.key,
     this.exploitation,
   });
+
+  @override
+  State<MeteoScreen> createState() => _MeteoScreenState();
+}
+
+class _MeteoScreenState extends State<MeteoScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _checkAndLoadApiKey();
+  }
+
+  Future<void> _checkAndLoadApiKey() async {
+    final prefs = await SharedPreferences.getInstance();
+    final apiKey = prefs.getString(AppConstants.openWeatherApiKey);
+    if (apiKey != null) {
+      Provider.of<MeteoProvider>(context, listen: false).setApiKey(apiKey);
+      
+      // Charger la météo si exploitation disponible
+      if (widget.exploitation?.latitude != null && widget.exploitation?.longitude != null) {
+        Provider.of<MeteoProvider>(context, listen: false).loadMeteoComplete(
+          latitude: widget.exploitation!.latitude!,
+          longitude: widget.exploitation!.longitude!,
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final exploitation = widget.exploitation;
 
   @override
   Widget build(BuildContext context) {
