@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/analyse_sol_provider.dart';
+import 'package:intl/intl.dart';
+import '../providers/intrant_provider.dart';
 import '../../data/models/exploitation_model.dart';
 import '../../data/models/parcelle_model.dart';
-import 'add_analyse_sol_screen.dart';
-import 'analyse_detail_screen.dart';
+import 'add_intrant_screen.dart';
 
-class AnalysesListScreen extends StatelessWidget {
+class IntrantsListScreen extends StatelessWidget {
   final ExploitationModel? exploitation;
   final ParcelleModel? parcelle;
 
-  const AnalysesListScreen({
+  const IntrantsListScreen({
     super.key,
     this.exploitation,
     this.parcelle,
@@ -20,15 +20,15 @@ class AnalysesListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Analyses de sol'),
+        title: const Text('Intrants'),
       ),
-      body: Consumer<AnalyseSolProvider>(
+      body: Consumer<IntrantProvider>(
         builder: (context, provider, _) {
-          if (provider.isLoading && provider.analyses.isEmpty) {
+          if (provider.isLoading && provider.intrants.isEmpty) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (provider.error != null && provider.analyses.isEmpty) {
+          if (provider.error != null && provider.intrants.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -42,7 +42,7 @@ class AnalysesListScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => provider.loadAnalyses(
+                    onPressed: () => provider.loadIntrants(
                       exploitationId: exploitation?.id,
                       parcelleId: parcelle?.id,
                     ),
@@ -53,20 +53,20 @@ class AnalysesListScreen extends StatelessWidget {
             );
           }
 
-          if (provider.analyses.isEmpty) {
+          if (provider.intrants.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.science_outlined, size: 64, color: Colors.grey),
+                  const Icon(Icons.agriculture, size: 64, color: Colors.grey),
                   const SizedBox(height: 16),
                   const Text(
-                    'Aucune analyse',
+                    'Aucun intrant',
                     style: TextStyle(fontSize: 18, color: Colors.grey),
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Ajoutez votre première analyse de sol',
+                    'Ajoutez votre premier intrant',
                     style: TextStyle(color: Colors.grey),
                   ),
                 ],
@@ -75,43 +75,37 @@ class AnalysesListScreen extends StatelessWidget {
           }
 
           return RefreshIndicator(
-            onRefresh: () => provider.loadAnalyses(
+            onRefresh: () => provider.loadIntrants(
               exploitationId: exploitation?.id,
               parcelleId: parcelle?.id,
             ),
             child: ListView.builder(
               padding: const EdgeInsets.all(16),
-              itemCount: provider.analyses.length,
+              itemCount: provider.intrants.length,
               itemBuilder: (context, index) {
-                final analyse = provider.analyses[index];
+                final intrant = provider.intrants[index];
                 return Card(
                   margin: const EdgeInsets.only(bottom: 12),
                   child: ListTile(
-                    leading: const Icon(Icons.science, color: Colors.green),
+                    leading: const Icon(Icons.agriculture, color: Colors.green),
                     title: Text(
-                      'Analyse du ${_formatDate(analyse.datePrelevement)}',
+                      intrant.typeIntrant,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (analyse.ph != null) Text('pH: ${analyse.ph!.toStringAsFixed(2)}'),
-                        if (analyse.azoteN != null)
-                          Text('N: ${analyse.azoteN!.toStringAsFixed(2)} mg/kg'),
-                        if (analyse.phosphoreP != null)
-                          Text('P: ${analyse.phosphoreP!.toStringAsFixed(2)} mg/kg'),
-                        if (analyse.potassiumK != null)
-                          Text('K: ${analyse.potassiumK!.toStringAsFixed(2)} mg/kg'),
+                        if (intrant.nomCommercial != null)
+                          Text(intrant.nomCommercial!),
+                        Text(
+                          '${intrant.quantite} ${intrant.unite}',
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                        Text('Date: ${_formatDate(intrant.dateApplication)}'),
+                        if (intrant.cultureConcernee != null)
+                          Text('Culture: ${intrant.cultureConcernee}'),
                       ],
                     ),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => AnalyseDetailScreen(analyse: analyse),
-                        ),
-                      );
-                    },
                   ),
                 );
               },
@@ -124,7 +118,7 @@ class AnalysesListScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (_) => AddAnalyseSolScreen(
+                    builder: (_) => AddIntrantScreen(
                       exploitation: exploitation!,
                       parcelle: parcelle,
                     ),
@@ -141,7 +135,7 @@ class AnalysesListScreen extends StatelessWidget {
   String _formatDate(String dateStr) {
     try {
       final date = DateTime.parse(dateStr);
-      return '${date.day}/${date.month}/${date.year}';
+      return DateFormat('dd/MM/yyyy').format(date);
     } catch (e) {
       return dateStr;
     }

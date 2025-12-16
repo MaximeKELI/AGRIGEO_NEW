@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/exploitation_provider.dart';
 import 'exploitations_list_screen.dart';
+import 'analyses_list_screen.dart';
+import 'recommandations_screen.dart';
 import 'login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -47,8 +49,8 @@ class _HomeScreenState extends State<HomeScreen> {
         index: _currentIndex,
         children: const [
           ExploitationsListScreen(),
-          Placeholder(), // Analyses
-          Placeholder(), // Recommandations
+          AnalysesListScreen(),
+          RecommandationsScreen(),
           Placeholder(), // Profil
         ],
       ),
