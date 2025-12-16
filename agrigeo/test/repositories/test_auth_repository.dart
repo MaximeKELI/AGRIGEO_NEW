@@ -1,16 +1,16 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
-import 'package:mockito/annotations.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 
 import 'package:agrigeo/data/repositories/auth_repository.dart';
 import 'package:agrigeo/data/datasources/api_service.dart';
 import 'package:agrigeo/data/models/user_model.dart';
+import 'package:agrigeo/core/errors/failures.dart';
 
-import 'test_auth_repository.mocks.dart';
+class MockApiService extends Mock implements ApiService {}
+class MockFlutterSecureStorage extends Mock implements FlutterSecureStorage {}
 
-@GenerateMocks([ApiService, FlutterSecureStorage])
 void main() {
   group('AuthRepository', () {
     late AuthRepository repository;
@@ -169,7 +169,7 @@ void main() {
 
     test('isLoggedIn should return false when no token', () async {
       // Arrange
-      when(mockStorage.read(key: 'auth_token'))
+      when(() => mockStorage.read(key: 'auth_token'))
           .thenAnswer((_) async => null);
 
       // Act
@@ -180,4 +180,3 @@ void main() {
     });
   });
 }
-

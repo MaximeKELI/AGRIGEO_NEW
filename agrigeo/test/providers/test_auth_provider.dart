@@ -1,15 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
-import 'package:mockito/annotations.dart';
+import 'package:mocktail/mocktail.dart';
 
 import 'package:agrigeo/presentation/providers/auth_provider.dart';
 import 'package:agrigeo/data/repositories/auth_repository.dart';
 import 'package:agrigeo/data/models/user_model.dart';
 import 'package:agrigeo/core/errors/failures.dart';
 
-import 'test_auth_provider.mocks.dart';
+class MockAuthRepository extends Mock implements AuthRepository {}
 
-@GenerateMocks([AuthRepository])
 void main() {
   group('AuthProvider', () {
     late AuthProvider provider;
@@ -37,7 +35,7 @@ void main() {
         isActive: true,
       );
 
-      when(mockRepository.login('testuser', 'password123'))
+      when(() => mockRepository.login('testuser', 'password123'))
           .thenAnswer((_) async => user);
 
       // Act
@@ -53,7 +51,7 @@ void main() {
 
     test('login should set error on failure', () async {
       // Arrange
-      when(mockRepository.login('testuser', 'wrongpassword'))
+      when(() => mockRepository.login('testuser', 'wrongpassword'))
           .thenThrow(AuthenticationFailure('Identifiants invalides'));
 
       // Act
@@ -77,7 +75,7 @@ void main() {
         isActive: true,
       );
 
-      when(mockRepository.login('testuser', 'password123'))
+      when(() => mockRepository.login('testuser', 'password123'))
           .thenAnswer((_) async {
         await Future.delayed(const Duration(milliseconds: 100));
         return user;
@@ -110,7 +108,7 @@ void main() {
         'role_id': 1,
       };
 
-      when(mockRepository.register(data))
+      when(() => mockRepository.register(data))
           .thenAnswer((_) async => user);
 
       // Act
@@ -124,11 +122,20 @@ void main() {
 
     test('logout should clear user', () async {
       // Arrange
-      provider = AuthProvider(repository: mockRepository);
-      provider.login('testuser', 'password123');
+      final user = UserModel(
+        id: 1,
+        username: 'testuser',
+        email: 'test@example.com',
+        roleId: 1,
+        isActive: true,
+      );
 
-      when(mockRepository.logout())
+      when(() => mockRepository.login('testuser', 'password123'))
+          .thenAnswer((_) async => user);
+      when(() => mockRepository.logout())
           .thenAnswer((_) async => {});
+
+      await provider.login('testuser', 'password123');
 
       // Act
       await provider.logout();
@@ -136,7 +143,7 @@ void main() {
       // Assert
       expect(provider.isAuthenticated, false);
       expect(provider.user, isNull);
-      verify(mockRepository.logout()).called(1);
+      verify(() => mockRepository.logout()).called(1);
     });
 
     test('clearError should remove error', () {
@@ -151,4 +158,3 @@ void main() {
     });
   });
 }
-

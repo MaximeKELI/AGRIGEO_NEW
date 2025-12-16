@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:mockito/mockito.dart';
 
 import 'package:agrigeo/presentation/screens/login_screen.dart';
 import 'package:agrigeo/presentation/providers/auth_provider.dart';
@@ -101,7 +100,7 @@ void main() {
       }
     });
 
-    testWidgets('should show loading indicator when logging in', (WidgetTester tester) async {
+    testWidgets('should display loading state', (WidgetTester tester) async {
       // Arrange
       final authProvider = AuthProvider();
 
@@ -119,9 +118,7 @@ void main() {
       await tester.pump();
 
       // Assert - Devrait afficher un indicateur de chargement
-      // (Le comportement exact dépend de l'implémentation)
       expect(find.byType(LoginScreen), findsOneWidget);
     });
   });
 }
-

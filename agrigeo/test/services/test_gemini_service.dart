@@ -1,14 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
-import 'package:mockito/annotations.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:dio/dio.dart';
 
 import 'package:agrigeo/data/services/gemini_service.dart';
 import 'package:agrigeo/data/models/chat_message_model.dart';
 
-import 'test_gemini_service.mocks.dart';
+class MockDio extends Mock implements Dio {}
 
-@GenerateMocks([Dio])
 void main() {
   group('GeminiService', () {
     late GeminiService service;
@@ -37,10 +35,10 @@ void main() {
         requestOptions: RequestOptions(path: ''),
       );
 
-      when(mockDio.post(
-        any,
-        data: anyNamed('data'),
-        options: anyNamed('options'),
+      when(() => mockDio.post(
+        any(),
+        data: any(named: 'data'),
+        options: any(named: 'options'),
       )).thenAnswer((_) async => response);
 
       // Act
@@ -48,19 +46,19 @@ void main() {
 
       // Assert
       expect(result, 'Réponse du chatbot');
-      verify(mockDio.post(
-        any,
-        data: anyNamed('data'),
-        options: anyNamed('options'),
+      verify(() => mockDio.post(
+        any(),
+        data: any(named: 'data'),
+        options: any(named: 'options'),
       )).called(1);
     });
 
     test('sendMessage should throw exception on API error', () async {
       // Arrange
-      when(mockDio.post(
-        any,
-        data: anyNamed('data'),
-        options: anyNamed('options'),
+      when(() => mockDio.post(
+        any(),
+        data: any(named: 'data'),
+        options: any(named: 'options'),
       )).thenThrow(DioException(
         requestOptions: RequestOptions(path: ''),
         response: Response(
@@ -110,27 +108,27 @@ void main() {
         ),
       ];
 
-      when(mockDio.post(
-        any,
-        data: anyNamed('data'),
-        options: anyNamed('options'),
+      when(() => mockDio.post(
+        any(),
+        data: any(named: 'data'),
+        options: any(named: 'options'),
       )).thenAnswer((_) async => response);
 
       // Act
       await service.sendMessage('Deuxième message', conversationHistory: history);
 
       // Assert
-      verify(mockDio.post(
-        any,
+      verify(() => mockDio.post(
+        any(),
         data: argThat(
-          predicate((data) {
+          (data) {
             final contents = data['contents'] as List;
             // Devrait avoir le contexte système + historique + nouveau message
             return contents.length >= 3;
-          }),
+          },
           named: 'data',
         ),
-        options: anyNamed('options'),
+        options: any(named: 'options'),
       )).called(1);
     });
 
@@ -159,28 +157,28 @@ void main() {
         }
       };
 
-      when(mockDio.post(
-        any,
-        data: anyNamed('data'),
-        options: anyNamed('options'),
+      when(() => mockDio.post(
+        any(),
+        data: any(named: 'data'),
+        options: any(named: 'options'),
       )).thenAnswer((_) async => response);
 
       // Act
       await service.sendMessage('Question', contextData: contextData);
 
       // Assert
-      verify(mockDio.post(
-        any,
+      verify(() => mockDio.post(
+        any(),
         data: argThat(
-          predicate((data) {
+          (data) {
             final contents = data['contents'] as List;
             final firstMessage = contents[0]['parts'][0]['text'] as String;
             // Le contexte devrait être inclus dans le premier message
             return firstMessage.contains('Ma Ferme');
-          }),
+          },
           named: 'data',
         ),
-        options: anyNamed('options'),
+        options: any(named: 'options'),
       )).called(1);
     });
 
@@ -194,4 +192,3 @@ void main() {
     });
   });
 }
-
