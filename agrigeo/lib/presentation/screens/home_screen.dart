@@ -6,6 +6,7 @@ import 'exploitations_list_screen.dart';
 import 'analyses_list_screen.dart';
 import 'recommandations_screen.dart';
 import 'meteo_screen.dart';
+import 'chat_screen.dart';
 import 'login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
