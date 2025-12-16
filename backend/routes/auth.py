@@ -59,8 +59,12 @@ def register():
         
         log_action(user.id, 'create', 'user', user.id, {'username': user.username})
         
+        # Générer un token JWT pour connecter automatiquement l'utilisateur
+        access_token = create_access_token(identity=user.id)
+        
         return jsonify({
             'message': 'Utilisateur créé avec succès',
+            'access_token': access_token,
             'user': user.to_dict()
         }), 201
         

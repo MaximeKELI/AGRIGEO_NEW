@@ -10,11 +10,16 @@ class UserModel {
   final String? nom;
   final String? prenom;
   final String? telephone;
+  @JsonKey(name: 'zone_intervention')
   final String? zoneIntervention;
+  @JsonKey(name: 'role_id')
   final int roleId;
   final RoleModel? role;
+  @JsonKey(name: 'is_active')
   final bool isActive;
+  @JsonKey(name: 'created_at')
   final String? createdAt;
+  @JsonKey(name: 'updated_at')
   final String? updatedAt;
 
   UserModel({
@@ -42,7 +47,9 @@ class RoleModel {
   final String nom;
   final String? description;
   final String? permissions;
+  @JsonKey(name: 'created_at')
   final String? createdAt;
+  @JsonKey(name: 'updated_at')
   final String? updatedAt;
 
   RoleModel({

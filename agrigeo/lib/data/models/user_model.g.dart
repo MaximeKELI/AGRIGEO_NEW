@@ -13,15 +13,15 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
   nom: json['nom'] as String?,
   prenom: json['prenom'] as String?,
   telephone: json['telephone'] as String?,
-  zoneIntervention: json['zoneIntervention'] as String?,
-  roleId: (json['roleId'] as num).toInt(),
+  zoneIntervention: json['zone_intervention'] as String?,
+  roleId: (json['role_id'] as num).toInt(),
   role:
       json['role'] == null
           ? null
           : RoleModel.fromJson(json['role'] as Map<String, dynamic>),
-  isActive: json['isActive'] as bool,
-  createdAt: json['createdAt'] as String?,
-  updatedAt: json['updatedAt'] as String?,
+  isActive: json['is_active'] as bool,
+  createdAt: json['created_at'] as String?,
+  updatedAt: json['updated_at'] as String?,
 );
 
 Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
@@ -31,12 +31,12 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
   'nom': instance.nom,
   'prenom': instance.prenom,
   'telephone': instance.telephone,
-  'zoneIntervention': instance.zoneIntervention,
-  'roleId': instance.roleId,
+  'zone_intervention': instance.zoneIntervention,
+  'role_id': instance.roleId,
   'role': instance.role,
-  'isActive': instance.isActive,
-  'createdAt': instance.createdAt,
-  'updatedAt': instance.updatedAt,
+  'is_active': instance.isActive,
+  'created_at': instance.createdAt,
+  'updated_at': instance.updatedAt,
 };
 
 RoleModel _$RoleModelFromJson(Map<String, dynamic> json) => RoleModel(
@@ -44,8 +44,8 @@ RoleModel _$RoleModelFromJson(Map<String, dynamic> json) => RoleModel(
   nom: json['nom'] as String,
   description: json['description'] as String?,
   permissions: json['permissions'] as String?,
-  createdAt: json['createdAt'] as String?,
-  updatedAt: json['updatedAt'] as String?,
+  createdAt: json['created_at'] as String?,
+  updatedAt: json['updated_at'] as String?,
 );
 
 Map<String, dynamic> _$RoleModelToJson(RoleModel instance) => <String, dynamic>{
@@ -53,6 +53,6 @@ Map<String, dynamic> _$RoleModelToJson(RoleModel instance) => <String, dynamic>{
   'nom': instance.nom,
   'description': instance.description,
   'permissions': instance.permissions,
-  'createdAt': instance.createdAt,
-  'updatedAt': instance.updatedAt,
+  'created_at': instance.createdAt,
+  'updated_at': instance.updatedAt,
 };

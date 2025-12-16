@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/animations/fade_in_widget.dart';
+import '../widgets/animations/slide_in_widget.dart';
+import '../widgets/animations/scale_in_widget.dart';
+import '../widgets/animations/staggered_list_widget.dart';
+import '../widgets/animations/animated_button.dart';
 import '../../data/datasources/api_service.dart';
 import '../../data/models/user_model.dart';
 import 'home_screen.dart';
@@ -42,27 +47,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     try {
       final apiService = ApiService();
-      // Pour l'inscription, on peut utiliser un endpoint public ou avoir des rôles par défaut
-      // Pour l'instant, on utilise un rôle par défaut (Agriculteur = 1)
-      // En production, il faudrait un endpoint public pour récupérer les rôles disponibles
+      final response = await apiService.getPublicRoles();
+      final List<dynamic> rolesData = response.data;
+      
       setState(() {
-        _roles = [
-          RoleModel(id: 1, nom: 'Agriculteur', description: 'Producteur agricole'),
-          RoleModel(id: 2, nom: 'Technicien', description: 'Technicien agricole'),
-          RoleModel(id: 3, nom: 'Agent', description: 'Agent de suivi'),
-        ];
-        _selectedRoleId = 1;
+        _roles = rolesData.map((json) => RoleModel.fromJson(json)).toList();
+        if (_roles.isNotEmpty) {
+          _selectedRoleId = _roles.first.id;
+        }
         _isLoadingRoles = false;
       });
     } catch (e) {
       // En cas d'erreur, utiliser les rôles par défaut
-      setState(() {
-        _roles = [
-          RoleModel(id: 1, nom: 'Agriculteur', description: 'Producteur agricole'),
-        ];
-        _selectedRoleId = 1;
-        _isLoadingRoles = false;
-      });
+      if (mounted) {
+        setState(() {
+          _roles = [
+            RoleModel(id: 1, nom: 'Agriculteur', description: 'Producteur agricole'),
+          ];
+          _selectedRoleId = 1;
+          _isLoadingRoles = false;
+        });
+      }
     }
   }
 
@@ -132,46 +137,70 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Inscription'),
+        title: FadeInWidget(
+          child: const Text('Inscription'),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Icon(
-                    Icons.person_add,
-                    size: 64,
-                    color: Colors.green,
-                  ),
-                  const SizedBox(height: 24),
-                  const Text(
-                    'Créer un compte',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.green.shade50,
+              Colors.white,
+              Colors.green.shade50,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24.0),
+              child: Form(
+                key: _formKey,
+                child: StaggeredListWidget(
+                  staggerDuration: const Duration(milliseconds: 80),
+                  children: [
+                    ScaleInWidget(
+                      delay: const Duration(milliseconds: 200),
+                      child: const Icon(
+                        Icons.person_add,
+                        size: 80,
+                        color: Colors.green,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Rejoignez AGRIGEO pour gérer vos exploitations',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
+                    const SizedBox(height: 24),
+                    FadeInWidget(
+                      delay: const Duration(milliseconds: 300),
+                      child: const Text(
+                        'Créer un compte',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 32),
+                    const SizedBox(height: 8),
+                    FadeInWidget(
+                      delay: const Duration(milliseconds: 400),
+                      child: const Text(
+                        'Rejoignez AGRIGEO pour gérer vos exploitations',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
                   
                   // Nom d'utilisateur
                   TextFormField(

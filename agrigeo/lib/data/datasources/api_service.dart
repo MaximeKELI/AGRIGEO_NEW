@@ -77,6 +77,16 @@ class ApiService {
     }
   }
 
+  /// Récupère les rôles disponibles (endpoint public)
+  Future<Response> getPublicRoles() async {
+    try {
+      final response = await _dio.get(ApiConstants.publicRoles);
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   // Exploitations endpoints
   Future<Response> getExploitations() async {
     try {

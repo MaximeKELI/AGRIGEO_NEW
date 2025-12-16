@@ -33,7 +33,15 @@ class AuthRepository {
   Future<UserModel> register(Map<String, dynamic> data) async {
     try {
       final response = await _apiService.register(data);
+      final token = response.data['access_token'];
       final userData = response.data['user'];
+
+      // Sauvegarder le token si disponible (pour connexion automatique)
+      if (token != null) {
+        await _storage.write(key: AppConstants.tokenKey, value: token);
+        await _storage.write(key: AppConstants.userKey, value: jsonEncode(userData));
+      }
+
       return UserModel.fromJson(userData);
     } catch (e) {
       if (e is Failure) rethrow;
