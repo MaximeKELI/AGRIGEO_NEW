@@ -156,13 +156,13 @@ class RecommandationsScreen extends StatelessWidget {
                   children: [
                     Chip(
                       label: Text(rec.priorite),
-                      backgroundColor: priorityColor.withOpacity(0.2),
+                      backgroundColor: priorityColor.withValues(alpha: 0.2),
                       labelStyle: TextStyle(color: priorityColor),
                     ),
                     const SizedBox(width: 8),
                     Chip(
                       label: Text(rec.statut),
-                      backgroundColor: Colors.grey.withOpacity(0.2),
+                      backgroundColor: Colors.grey.withValues(alpha: 0.2),
                     ),
                   ],
                 ),
