@@ -9,6 +9,7 @@ from models.intrant import Intrant
 from models.recommandation import Recommandation
 from models.historique_action import HistoriqueAction
 from models.recolte import Recolte
+from models.region import Region, Prefecture, Commune
 
 __all__ = [
     'User', 'Role',
@@ -18,6 +19,7 @@ __all__ = [
     'Intrant',
     'Recommandation',
     'HistoriqueAction',
-    'Recolte'
+    'Recolte',
+    'Region', 'Prefecture', 'Commune'
 ]
 

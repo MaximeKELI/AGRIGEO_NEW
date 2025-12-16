@@ -22,6 +22,8 @@ from routes.recommandations import recommandations_bp
 from routes.meteo import meteo_bp
 from routes.sensors import sensors_bp
 from routes.recoltes import recoltes_bp
+from routes.geographie import geographie_bp
+from routes.statistiques import statistiques_bp
 
 load_dotenv()
 
@@ -60,6 +62,8 @@ app.register_blueprint(recommandations_bp, url_prefix='/api/recommandations')
 app.register_blueprint(meteo_bp, url_prefix='/api/meteo')
 app.register_blueprint(sensors_bp, url_prefix='/api/sensors')
 app.register_blueprint(recoltes_bp, url_prefix='/api/recoltes')
+app.register_blueprint(geographie_bp, url_prefix='/api/geographie')
+app.register_blueprint(statistiques_bp, url_prefix='/api/statistiques')
 
 @app.route('/api/health')
 def health_check():
