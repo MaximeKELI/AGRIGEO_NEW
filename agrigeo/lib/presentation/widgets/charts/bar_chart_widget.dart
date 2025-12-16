@@ -62,7 +62,7 @@ class BarChartWidget extends StatelessWidget {
                   barTouchData: BarTouchData(
                     enabled: true,
                     touchTooltipData: BarTouchTooltipData(
-                      getTooltipColor: (group) => Colors.grey[800]!,
+                      tooltipBgColor: Colors.grey[800]!,
                       tooltipRoundedRadius: 8,
                       tooltipPadding: const EdgeInsets.all(8),
                     ),
