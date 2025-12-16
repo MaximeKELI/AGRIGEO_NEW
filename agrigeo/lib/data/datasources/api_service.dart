@@ -142,6 +142,26 @@ class ApiService {
     }
   }
 
+  Future<Response> updateAnalyseSol(int id, Map<String, dynamic> data) async {
+    try {
+      await _addAuthHeader();
+      final response = await _dio.put('${ApiConstants.analysesSols}/$id', data: data);
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Response> deleteAnalyseSol(int id) async {
+    try {
+      await _addAuthHeader();
+      final response = await _dio.delete('${ApiConstants.analysesSols}/$id');
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   // Intrants endpoints
   Future<Response> getIntrants({int? exploitationId, int? parcelleId}) async {
     try {
@@ -166,6 +186,26 @@ class ApiService {
     }
   }
 
+  Future<Response> updateIntrant(int id, Map<String, dynamic> data) async {
+    try {
+      await _addAuthHeader();
+      final response = await _dio.put('${ApiConstants.intrants}/$id', data: data);
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Response> deleteIntrant(int id) async {
+    try {
+      await _addAuthHeader();
+      final response = await _dio.delete('${ApiConstants.intrants}/$id');
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   // Recommandations endpoints
   Future<Response> getRecommandations({int? exploitationId, int? parcelleId}) async {
     try {
@@ -184,6 +224,62 @@ class ApiService {
     try {
       await _addAuthHeader();
       final response = await _dio.post('${ApiConstants.recommandations}/generate/$exploitationId');
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Response> updateRecommandationStatus(int id, String statut) async {
+    try {
+      await _addAuthHeader();
+      final response = await _dio.put(
+        '${ApiConstants.recommandations}/$id/status',
+        data: {'statut': statut},
+      );
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Response> getParcelles({required int exploitationId}) async {
+    try {
+      await _addAuthHeader();
+      final response = await _dio.get(
+        ApiConstants.parcelles,
+        queryParameters: {'exploitation_id': exploitationId},
+      );
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Response> createParcelle(Map<String, dynamic> data) async {
+    try {
+      await _addAuthHeader();
+      final response = await _dio.post(ApiConstants.parcelles, data: data);
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Response> updateParcelle(int id, Map<String, dynamic> data) async {
+    try {
+      await _addAuthHeader();
+      final response = await _dio.put('${ApiConstants.parcelles}/$id', data: data);
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Response> deleteParcelle(int id) async {
+    try {
+      await _addAuthHeader();
+      final response = await _dio.delete('${ApiConstants.parcelles}/$id');
       return response;
     } on DioException catch (e) {
       throw _handleError(e);

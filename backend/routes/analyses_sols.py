@@ -8,6 +8,7 @@ from database import db
 from models.analyse_sol import AnalyseSol
 from models.exploitation import Exploitation
 from utils.historique import log_action
+from utils.validators import validate_analyse_sol_data
 
 analyses_sols_bp = Blueprint('analyses_sols', __name__)
 
@@ -39,8 +40,10 @@ def create_analyse():
         user_id = get_jwt_identity()
         data = request.get_json()
         
-        if not data.get('date_prelevement') or not data.get('exploitation_id'):
-            return jsonify({'error': 'date_prelevement et exploitation_id sont requis'}), 400
+        # Validation des données
+        errors = validate_analyse_sol_data(data)
+        if errors:
+            return jsonify({'errors': errors}), 400
         
         # Vérifier que l'exploitation existe
         exploitation = Exploitation.query.get(data['exploitation_id'])

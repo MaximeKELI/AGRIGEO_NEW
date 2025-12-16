@@ -8,6 +8,7 @@ from database import db
 from models.intrant import Intrant
 from models.exploitation import Exploitation
 from utils.historique import log_action
+from utils.validators import validate_intrant_data
 
 intrants_bp = Blueprint('intrants', __name__)
 
@@ -39,8 +40,10 @@ def create_intrant():
         user_id = get_jwt_identity()
         data = request.get_json()
         
-        if not data.get('type_intrant') or not data.get('quantite') or not data.get('date_application') or not data.get('exploitation_id'):
-            return jsonify({'error': 'type_intrant, quantite, date_application et exploitation_id sont requis'}), 400
+        # Validation des données
+        errors = validate_intrant_data(data)
+        if errors:
+            return jsonify({'errors': errors}), 400
         
         # Vérifier que l'exploitation existe
         exploitation = Exploitation.query.get(data['exploitation_id'])
