@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/exploitation_provider.dart';
+import '../providers/chat_provider.dart';
 import 'exploitations_list_screen.dart';
 import 'analyses_list_screen.dart';
 import 'recommandations_screen.dart';
@@ -18,6 +19,15 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // Configurer la clé API Gemini au démarrage
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ChatProvider>(context, listen: false).setApiKey('AIzaSyCwt5NygybBr9oasALOG7Ht-XhM2Dk-sIk');
+    });
+  }
 
   @override
   void initState() {
@@ -53,7 +63,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ExploitationsListScreen(),
           AnalysesListScreen(),
           RecommandationsScreen(),
-          MeteoScreen(), // Météo
+          MeteoScreen(),
+          ChatScreen(), // Chatbot IA
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -80,6 +91,10 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.cloud),
             label: 'Météo',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: 'Assistant',
           ),
         ],
       ),
