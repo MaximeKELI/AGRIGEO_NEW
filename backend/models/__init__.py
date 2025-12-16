@@ -8,6 +8,7 @@ from models.donnee_climatique import DonneeClimatique
 from models.intrant import Intrant
 from models.recommandation import Recommandation
 from models.historique_action import HistoriqueAction
+from models.recolte import Recolte
 
 __all__ = [
     'User', 'Role',
@@ -16,6 +17,7 @@ __all__ = [
     'DonneeClimatique',
     'Intrant',
     'Recommandation',
-    'HistoriqueAction'
+    'HistoriqueAction',
+    'Recolte'
 ]
 

@@ -8,7 +8,7 @@ db = SQLAlchemy()
 def init_db():
     """Initialise la base de données et crée toutes les tables"""
     # Importer tous les modèles pour qu'ils soient enregistrés
-    from models import User, Role, Exploitation, Parcelle, AnalyseSol, DonneeClimatique, Intrant, Recommandation, HistoriqueAction
+    from models import User, Role, Exploitation, Parcelle, AnalyseSol, DonneeClimatique, Intrant, Recommandation, HistoriqueAction, Recolte
     db.create_all()
     
     # Créer les rôles de base s'ils n'existent pas
