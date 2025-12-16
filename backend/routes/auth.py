@@ -10,6 +10,15 @@ from utils.historique import log_action
 
 auth_bp = Blueprint('auth', __name__)
 
+@auth_bp.route('/roles', methods=['GET'])
+def get_public_roles():
+    """Liste tous les rôles disponibles pour l'inscription (endpoint public)"""
+    try:
+        roles = Role.query.all()
+        return jsonify([role.to_dict() for role in roles]), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @auth_bp.route('/register', methods=['POST'])
 def register():
     """Enregistrement d'un nouvel utilisateur"""
