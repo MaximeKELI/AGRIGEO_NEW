@@ -12,6 +12,9 @@ import 'meteo_screen.dart';
 import 'chat_screen.dart';
 import 'intrants_list_screen.dart';
 import 'image_analysis_screen.dart';
+import 'add_exploitation_screen.dart';
+import 'add_analyse_sol_screen.dart';
+import 'add_intrant_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -447,7 +450,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 onTap: () async {
                   Navigator.pop(context);
                   await authProvider.logout();
-                  if (mounted) {
+                  if (context.mounted) {
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(builder: (_) => const LoginScreen()),
                     );
