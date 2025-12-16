@@ -58,11 +58,13 @@ Réponds toujours en français et de manière professionnelle et pédagogique.
     };
 
     print('🔄 Appel à l\'API Gemini...');
-    print('URL: $baseUrl/models/gemini-2.5-flash:generateContent\n');
+    // Essayer d'abord avec gemini-2.5-flash, puis gemini-2.0-flash en fallback
+    String model = 'gemini-2.5-flash';
+    print('URL: $baseUrl/models/$model:generateContent\n');
 
     // Appel à l'API
-    final response = await dio.post(
-      '$baseUrl/models/gemini-2.5-flash:generateContent?key=$apiKey',
+    var response = await dio.post(
+      '$baseUrl/models/$model:generateContent?key=$apiKey',
       data: requestData,
       options: Options(
         headers: {'Content-Type': 'application/json'},
@@ -71,6 +73,21 @@ Réponds toujours en français et de manière professionnelle et pédagogique.
     );
 
     print('📥 Réponse reçue (Status: ${response.statusCode})\n');
+
+    // Si le modèle est surchargé, essayer avec gemini-2.0-flash
+    if (response.statusCode == 503 && model == 'gemini-2.5-flash') {
+      print('⚠️  Modèle surchargé, tentative avec gemini-2.0-flash...\n');
+      model = 'gemini-2.0-flash';
+      response = await dio.post(
+        '$baseUrl/models/$model:generateContent?key=$apiKey',
+        data: requestData,
+        options: Options(
+          headers: {'Content-Type': 'application/json'},
+          validateStatus: (status) => status! < 500,
+        ),
+      );
+      print('📥 Réponse reçue (Status: ${response.statusCode})\n');
+    }
 
     // Vérifier les erreurs
     if (response.statusCode != 200) {
