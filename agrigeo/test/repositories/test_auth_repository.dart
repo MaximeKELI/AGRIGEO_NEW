@@ -60,7 +60,7 @@ void main() {
 
     test('login should throw Failure on error', () async {
       // Arrange
-      when(mockApiService.login('testuser', 'wrongpassword'))
+      when(() => mockApiService.login('testuser', 'wrongpassword'))
           .thenThrow(ServerFailure('Identifiants invalides'));
 
       // Act & Assert
@@ -93,7 +93,7 @@ void main() {
         'role_id': 1,
       };
 
-      when(mockApiService.register(data))
+      when(() => mockApiService.register(data))
           .thenAnswer((_) async => response);
 
       // Act
@@ -102,7 +102,7 @@ void main() {
       // Assert
       expect(result, isA<UserModel>());
       expect(result.username, 'newuser');
-      verify(mockApiService.register(data)).called(1);
+      verify(() => mockApiService.register(data)).called(1);
     });
 
     test('getCurrentUser should return UserModel when logged in', () async {
@@ -119,7 +119,7 @@ void main() {
         requestOptions: RequestOptions(path: ''),
       );
 
-      when(mockApiService.getCurrentUser())
+      when(() => mockApiService.getCurrentUser())
           .thenAnswer((_) async => response);
 
       // Act
@@ -132,7 +132,7 @@ void main() {
 
     test('getCurrentUser should return null on error', () async {
       // Arrange
-      when(mockApiService.getCurrentUser())
+      when(() => mockApiService.getCurrentUser())
           .thenThrow(ServerFailure('Erreur'));
 
       // Act
@@ -144,20 +144,20 @@ void main() {
 
     test('logout should clear storage', () async {
       // Arrange
-      when(mockStorage.delete(key: anyNamed('key')))
+      when(() => mockStorage.delete(key: any(named: 'key')))
           .thenAnswer((_) async => {});
 
       // Act
       await repository.logout();
 
       // Assert
-      verify(mockStorage.delete(key: 'auth_token')).called(1);
-      verify(mockStorage.delete(key: 'user_data')).called(1);
+      verify(() => mockStorage.delete(key: 'auth_token')).called(1);
+      verify(() => mockStorage.delete(key: 'user_data')).called(1);
     });
 
     test('isLoggedIn should return true when token exists', () async {
       // Arrange
-      when(mockStorage.read(key: 'auth_token'))
+      when(() => mockStorage.read(key: 'auth_token'))
           .thenAnswer((_) async => 'test_token');
 
       // Act
