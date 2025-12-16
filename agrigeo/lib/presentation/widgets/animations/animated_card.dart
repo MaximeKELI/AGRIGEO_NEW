@@ -31,7 +31,6 @@ class AnimatedCard extends StatefulWidget {
 
 class _AnimatedCardState extends State<AnimatedCard>
     with SingleTickerProviderStateMixin {
-  bool _isHovered = false;
   late AnimationController _controller;
   late Animation<double> _elevationAnimation;
 
@@ -64,13 +63,11 @@ class _AnimatedCardState extends State<AnimatedCard>
       child: SlideInWidget(
         delay: widget.delay,
         direction: AxisDirection.down,
-        child: MouseRegion(
+          child: MouseRegion(
           onEnter: (_) {
-            setState(() => _isHovered = true);
             _controller.forward();
           },
           onExit: (_) {
-            setState(() => _isHovered = false);
             _controller.reverse();
           },
           child: GestureDetector(

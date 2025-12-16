@@ -120,7 +120,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         );
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                const HomeScreen(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0.0, 0.1),
+                    end: Offset.zero,
+                  ).animate(CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOutCubic,
+                  )),
+                  child: child,
+                ),
+              );
+            },
+            transitionDuration: const Duration(milliseconds: 400),
+          ),
         );
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -202,245 +221,320 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 32),
                   
-                  // Nom d'utilisateur
-                  TextFormField(
-                    controller: _usernameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nom d\'utilisateur *',
-                      prefixIcon: Icon(Icons.person),
-                      border: OutlineInputBorder(),
-                      helperText: 'Minimum 3 caractères',
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer un nom d\'utilisateur';
-                      }
-                      if (value.length < 3) {
-                        return 'Le nom d\'utilisateur doit contenir au moins 3 caractères';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Email
-                  TextFormField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'Email *',
-                      prefixIcon: Icon(Icons.email),
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer votre email';
-                      }
-                      if (!value.contains('@')) {
-                        return 'Email invalide';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Mot de passe
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: _obscurePassword,
-                    decoration: InputDecoration(
-                      labelText: 'Mot de passe *',
-                      prefixIcon: const Icon(Icons.lock),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
-                      ),
-                      border: const OutlineInputBorder(),
-                      helperText: 'Minimum 6 caractères',
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer un mot de passe';
-                      }
-                      if (value.length < 6) {
-                        return 'Le mot de passe doit contenir au moins 6 caractères';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Confirmation mot de passe
-                  TextFormField(
-                    controller: _confirmPasswordController,
-                    obscureText: _obscureConfirmPassword,
-                    decoration: InputDecoration(
-                      labelText: 'Confirmer le mot de passe *',
-                      prefixIcon: const Icon(Icons.lock_outline),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscureConfirmPassword ? Icons.visibility : Icons.visibility_off,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscureConfirmPassword = !_obscureConfirmPassword;
-                          });
-                        },
-                      ),
-                      border: const OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Veuillez confirmer votre mot de passe';
-                      }
-                      if (value != _passwordController.text) {
-                        return 'Les mots de passe ne correspondent pas';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Rôle
-                  if (_isLoadingRoles)
-                    const Center(child: CircularProgressIndicator())
-                  else
-                    DropdownButtonFormField<int>(
-                      value: _selectedRoleId,
-                      decoration: const InputDecoration(
-                        labelText: 'Rôle *',
-                        prefixIcon: Icon(Icons.badge),
-                        border: OutlineInputBorder(),
-                      ),
-                      items: _roles.map((role) {
-                        return DropdownMenuItem<int>(
-                          value: role.id,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                role.nom,
-                                style: const TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              if (role.description != null)
-                                Text(
-                                  role.description!,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                            ],
+                    // Nom d'utilisateur
+                    SlideInWidget(
+                      delay: const Duration(milliseconds: 500),
+                      direction: AxisDirection.left,
+                      child: TextFormField(
+                        controller: _usernameController,
+                        decoration: InputDecoration(
+                          labelText: 'Nom d\'utilisateur *',
+                          prefixIcon: const Icon(Icons.person),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedRoleId = value;
-                        });
-                      },
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Veuillez sélectionner un rôle';
-                        }
-                        return null;
-                      },
-                    ),
-                  const SizedBox(height: 16),
-                  
-                  // Nom
-                  TextFormField(
-                    controller: _nomController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nom',
-                      prefixIcon: Icon(Icons.badge),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Prénom
-                  TextFormField(
-                    controller: _prenomController,
-                    decoration: const InputDecoration(
-                      labelText: 'Prénom',
-                      prefixIcon: Icon(Icons.badge),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Téléphone
-                  TextFormField(
-                    controller: _telephoneController,
-                    keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                      labelText: 'Téléphone',
-                      prefixIcon: Icon(Icons.phone),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Zone d'intervention
-                  TextFormField(
-                    controller: _zoneInterventionController,
-                    decoration: const InputDecoration(
-                      labelText: 'Zone d\'intervention',
-                      prefixIcon: Icon(Icons.location_on),
-                      border: OutlineInputBorder(),
-                      helperText: 'Région ou zone géographique',
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  
-                  // Bouton d'inscription
-                  Consumer<AuthProvider>(
-                    builder: (context, authProvider, _) {
-                      return ElevatedButton(
-                        onPressed: authProvider.isLoading ? null : _handleRegister,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          filled: true,
+                          fillColor: Colors.white,
+                          helperText: 'Minimum 3 caractères',
                         ),
-                        child: authProvider.isLoading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                ),
-                              )
-                            : const Text(
-                                'S\'inscrire',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Lien vers connexion
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Déjà un compte ? '),
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('Se connecter'),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Veuillez entrer un nom d\'utilisateur';
+                          }
+                          if (value.length < 3) {
+                            return 'Le nom d\'utilisateur doit contenir au moins 3 caractères';
+                          }
+                          return null;
+                        },
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Email
+                    SlideInWidget(
+                      delay: const Duration(milliseconds: 580),
+                      direction: AxisDirection.right,
+                      child: TextFormField(
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          labelText: 'Email *',
+                          prefixIcon: const Icon(Icons.email),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Veuillez entrer votre email';
+                          }
+                          if (!value.contains('@')) {
+                            return 'Email invalide';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Mot de passe
+                    SlideInWidget(
+                      delay: const Duration(milliseconds: 660),
+                      direction: AxisDirection.left,
+                      child: TextFormField(
+                        controller: _passwordController,
+                        obscureText: _obscurePassword,
+                        decoration: InputDecoration(
+                          labelText: 'Mot de passe *',
+                          prefixIcon: const Icon(Icons.lock),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          helperText: 'Minimum 6 caractères',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Veuillez entrer un mot de passe';
+                          }
+                          if (value.length < 6) {
+                            return 'Le mot de passe doit contenir au moins 6 caractères';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Confirmation mot de passe
+                    SlideInWidget(
+                      delay: const Duration(milliseconds: 740),
+                      direction: AxisDirection.right,
+                      child: TextFormField(
+                        controller: _confirmPasswordController,
+                        obscureText: _obscureConfirmPassword,
+                        decoration: InputDecoration(
+                          labelText: 'Confirmer le mot de passe *',
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscureConfirmPassword ? Icons.visibility : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscureConfirmPassword = !_obscureConfirmPassword;
+                              });
+                            },
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Veuillez confirmer votre mot de passe';
+                          }
+                          if (value != _passwordController.text) {
+                            return 'Les mots de passe ne correspondent pas';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Rôle
+                    SlideInWidget(
+                      delay: const Duration(milliseconds: 820),
+                      direction: AxisDirection.down,
+                      child: _isLoadingRoles
+                          ? const Center(child: CircularProgressIndicator())
+                          : DropdownButtonFormField<int>(
+                              value: _selectedRoleId,
+                              decoration: InputDecoration(
+                                labelText: 'Rôle *',
+                                prefixIcon: const Icon(Icons.badge),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white,
+                              ),
+                              items: _roles.map((role) {
+                                return DropdownMenuItem<int>(
+                                  value: role.id,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        role.nom,
+                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                      if (role.description != null)
+                                        Text(
+                                          role.description!,
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedRoleId = value;
+                                });
+                              },
+                              validator: (value) {
+                                if (value == null) {
+                                  return 'Veuillez sélectionner un rôle';
+                                }
+                                return null;
+                              },
+                            ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Nom
+                    SlideInWidget(
+                      delay: const Duration(milliseconds: 900),
+                      direction: AxisDirection.left,
+                      child: TextFormField(
+                        controller: _nomController,
+                        decoration: InputDecoration(
+                          labelText: 'Nom',
+                          prefixIcon: const Icon(Icons.badge),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Prénom
+                    SlideInWidget(
+                      delay: const Duration(milliseconds: 980),
+                      direction: AxisDirection.right,
+                      child: TextFormField(
+                        controller: _prenomController,
+                        decoration: InputDecoration(
+                          labelText: 'Prénom',
+                          prefixIcon: const Icon(Icons.badge),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Téléphone
+                    SlideInWidget(
+                      delay: const Duration(milliseconds: 1060),
+                      direction: AxisDirection.left,
+                      child: TextFormField(
+                        controller: _telephoneController,
+                        keyboardType: TextInputType.phone,
+                        decoration: InputDecoration(
+                          labelText: 'Téléphone',
+                          prefixIcon: const Icon(Icons.phone),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Zone d'intervention
+                    SlideInWidget(
+                      delay: const Duration(milliseconds: 1140),
+                      direction: AxisDirection.right,
+                      child: TextFormField(
+                        controller: _zoneInterventionController,
+                        decoration: InputDecoration(
+                          labelText: 'Zone d\'intervention',
+                          prefixIcon: const Icon(Icons.location_on),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          helperText: 'Région ou zone géographique',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    
+                    // Bouton d'inscription
+                    FadeInWidget(
+                      delay: const Duration(milliseconds: 1220),
+                      child: Consumer<AuthProvider>(
+                        builder: (context, authProvider, _) {
+                          return AnimatedButton(
+                            text: 'S\'inscrire',
+                            icon: Icons.person_add,
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                            onPressed: authProvider.isLoading ? null : _handleRegister,
+                            isLoading: authProvider.isLoading,
+                            borderRadius: 12,
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    
+                    // Lien vers connexion
+                    FadeInWidget(
+                      delay: const Duration(milliseconds: 1300),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Déjà un compte ? ',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text(
+                              'Se connecter',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
