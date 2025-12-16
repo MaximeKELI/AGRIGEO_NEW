@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 import '../providers/recolte_provider.dart';
 import '../providers/exploitation_provider.dart';
-import '../../data/models/recolte_model.dart';
-import '../widgets/animations/animations.dart';
 import '../widgets/charts/charts.dart';
 import 'add_recolte_screen.dart';
 import 'dart:io';
@@ -505,62 +502,66 @@ class _RecoltesScreenState extends State<RecoltesScreen> {
                 const SizedBox(height: 16),
                 Consumer<RecolteProvider>(
                   builder: (context, recolteProvider, _) {
-                    if (recolteProvider.prevision != null) {
-                      final prevision = recolteProvider.prevision!;
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData && snapshot.data != null) {
-                      final prevision = snapshot.data!;
-                      return Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Prévision pour la prochaine récolte',
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    if (recolteProvider.prevision == null) {
+                      // Charger la prévision si pas encore chargée
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        recolteProvider.loadPrevision(
+                          exploitationId: _selectedExploitationId!,
+                          typeCulture: _selectedTypeCulture!,
+                        );
+                      });
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    
+                    final prevision = recolteProvider.prevision!;
+                    return Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Prévision pour la prochaine récolte',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 16),
+                            Text('Quantité prévue: ${prevision.quantitePrevue.toStringAsFixed(0)} ${recoltes.isNotEmpty ? recoltes.first.uniteMesure : ""}'),
+                            const SizedBox(height: 8),
+                            Text('Probabilité de bonne récolte: ${prevision.probabiliteBonne.toStringAsFixed(1)}%'),
+                            Text('Probabilité de mauvaise récolte: ${prevision.probabiliteMauvaise.toStringAsFixed(1)}%'),
+                            const SizedBox(height: 8),
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: _getPredictionColor(prevision.prediction).withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              const SizedBox(height: 16),
-                              Text('Quantité prévue: ${prevision.quantitePrevue.toStringAsFixed(0)} ${recoltes.first.uniteMesure}'),
-                              const SizedBox(height: 8),
-                              Text('Probabilité de bonne récolte: ${prevision.probabiliteBonne.toStringAsFixed(1)}%'),
-                              Text('Probabilité de mauvaise récolte: ${prevision.probabiliteMauvaise.toStringAsFixed(1)}%'),
-                              const SizedBox(height: 8),
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: _getPredictionColor(prevision.prediction).withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      _getPredictionIcon(prevision.prediction),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    _getPredictionIcon(prevision.prediction),
+                                    color: _getPredictionColor(prevision.prediction),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Prévision: ${prevision.prediction.toUpperCase()}',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
                                       color: _getPredictionColor(prevision.prediction),
                                     ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      'Prévision: ${prevision.prediction.toUpperCase()}',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: _getPredictionColor(prevision.prediction),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                              if (prevision.raison != null) ...[
-                                const SizedBox(height: 8),
-                                Text(prevision.raison!, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
-                              ],
+                            ),
+                            if (prevision.raison != null) ...[
+                              const SizedBox(height: 8),
+                              Text(prevision.raison!, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
                             ],
-                          ),
+                          ],
                         ),
-                      );
-                    }
-                    return const SizedBox.shrink();
+                      ),
+                    );
                   },
-                ),
                 ),
               ],
             ],

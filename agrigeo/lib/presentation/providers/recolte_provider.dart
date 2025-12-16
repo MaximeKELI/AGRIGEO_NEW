@@ -79,7 +79,7 @@ class RecolteProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadPrevision({
+  Future<RecoltePrevision?> loadPrevision({
     required int exploitationId,
     required String typeCulture,
   }) async {
@@ -103,6 +103,7 @@ class RecolteProvider with ChangeNotifier {
 
     _isLoading = false;
     notifyListeners();
+    return _prevision;
   }
 
   Future<bool> createRecolte(RecolteModel recolte) async {
