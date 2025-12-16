@@ -54,8 +54,8 @@ void main() {
       // Assert
       expect(result, isA<UserModel>());
       expect(result.username, 'testuser');
-      verify(mockApiService.login('testuser', 'password123')).called(1);
-      verify(mockStorage.write(key: 'auth_token', value: 'test_token')).called(1);
+      verify(() => mockApiService.login('testuser', 'password123')).called(1);
+      verify(() => mockStorage.write(key: 'auth_token', value: 'test_token')).called(1);
     });
 
     test('login should throw Failure on error', () async {
