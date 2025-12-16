@@ -9,6 +9,7 @@ import 'presentation/providers/parcelle_provider.dart';
 import 'presentation/providers/sync_provider.dart';
 import 'presentation/providers/meteo_provider.dart';
 import 'presentation/providers/chat_provider.dart';
+import 'presentation/providers/recolte_provider.dart';
 import 'presentation/screens/login_screen.dart';
 import 'presentation/screens/home_screen.dart';
 
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SyncProvider()),
         ChangeNotifierProvider(create: (_) => MeteoProvider()),
         ChangeNotifierProvider(create: (_) => ChatProvider()),
+        ChangeNotifierProvider(create: (_) => RecolteProvider()),
       ],
       child: MaterialApp(
         title: 'AGRIGEO',

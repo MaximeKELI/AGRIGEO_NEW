@@ -5,7 +5,10 @@ import '../providers/exploitation_provider.dart';
 import '../providers/analyse_sol_provider.dart';
 import '../providers/intrant_provider.dart';
 import '../providers/recommandation_provider.dart';
+import '../providers/recolte_provider.dart';
 import '../widgets/animations/animations.dart';
+import '../widgets/charts/charts.dart';
+import 'recoltes_screen.dart';
 import 'exploitations_list_screen.dart';
 import 'analyses_list_screen.dart';
 import 'recommandations_screen.dart';
@@ -465,6 +468,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
             title: 'Assistant IA',
             index: 7,
             isSelected: _selectedIndex == 7,
+          ),
+          _buildDrawerItem(
+            icon: Icons.history,
+            title: 'Récoltes',
+            index: 8,
+            isSelected: _selectedIndex == 8,
           ),
           const Divider(),
           ListTile(
