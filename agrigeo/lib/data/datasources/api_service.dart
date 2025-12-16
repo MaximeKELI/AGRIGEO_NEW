@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../core/constants/api_constants.dart';
@@ -39,6 +38,19 @@ class ApiService {
       if (statusCode == 403) {
         return const AuthenticationFailure('Accès refusé');
       }
+      
+      // Gérer les erreurs de validation (400 avec 'errors' array)
+      if (statusCode == 400 && error.response!.data is Map) {
+        final data = error.response!.data as Map<String, dynamic>;
+        if (data.containsKey('errors') && data['errors'] is List) {
+          final errors = data['errors'] as List;
+          return ServerFailure(errors.join(', '));
+        }
+        if (data.containsKey('error')) {
+          return ServerFailure(data['error'].toString());
+        }
+      }
+      
       final message = error.response!.data['error'] ?? 'Erreur serveur';
       return ServerFailure(message);
     }

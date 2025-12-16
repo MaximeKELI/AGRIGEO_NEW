@@ -214,8 +214,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Lien vers inscription
                     FadeInWidget(
                       delay: const Duration(milliseconds: 900),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
                         children: [
                           const Text(
                             'Pas encore de compte ? ',

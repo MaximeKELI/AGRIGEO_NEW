@@ -142,10 +142,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         );
       } else if (mounted) {
+        final errorMessage = authProvider.error ?? 'Erreur lors de l\'inscription';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(authProvider.error ?? 'Erreur lors de l\'inscription'),
+            content: Text(
+              errorMessage,
+              style: const TextStyle(color: Colors.white),
+            ),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+            action: SnackBarAction(
+              label: 'Fermer',
+              textColor: Colors.white,
+              onPressed: () {},
+            ),
           ),
         );
       }
@@ -378,23 +388,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               items: _roles.map((role) {
                                 return DropdownMenuItem<int>(
                                   value: role.id,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        role.nom,
-                                        style: const TextStyle(fontWeight: FontWeight.bold),
-                                      ),
-                                      if (role.description != null)
-                                        Text(
-                                          role.description!,
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                    ],
+                                  child: Text(
+                                    role.description != null && role.description!.isNotEmpty
+                                        ? '${role.nom} - ${role.description}'
+                                        : role.nom,
+                                    style: const TextStyle(fontSize: 14),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
                                   ),
                                 );
                               }).toList(),
@@ -513,8 +513,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     // Lien vers connexion
                     FadeInWidget(
                       delay: const Duration(milliseconds: 1300),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
                         children: [
                           const Text(
                             'Déjà un compte ? ',
