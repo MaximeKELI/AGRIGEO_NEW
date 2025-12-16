@@ -32,5 +32,9 @@ class ApiConstants {
   
   // Recommandations endpoints
   static const String recommandations = '/recommandations';
+  
+  // Sensors endpoints
+  static const String sensors = '/sensors';
+  static const String sensorData = '/sensors/data';
 }
 
