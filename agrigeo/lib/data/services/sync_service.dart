@@ -106,6 +106,9 @@ class SyncService {
 
     return SyncResult(
       success: errors.isEmpty,
+      message: errors.isEmpty 
+          ? '$syncedCount exploitations synchronisées'
+          : '${errors.length} erreurs lors de la synchronisation',
       syncedCount: syncedCount,
       errors: errors,
     );
@@ -138,6 +141,9 @@ class SyncService {
 
     return SyncResult(
       success: errors.isEmpty,
+      message: errors.isEmpty 
+          ? '$syncedCount exploitations synchronisées'
+          : '${errors.length} erreurs lors de la synchronisation',
       syncedCount: syncedCount,
       errors: errors,
     );
@@ -170,6 +176,9 @@ class SyncService {
 
     return SyncResult(
       success: errors.isEmpty,
+      message: errors.isEmpty 
+          ? '$syncedCount exploitations synchronisées'
+          : '${errors.length} erreurs lors de la synchronisation',
       syncedCount: syncedCount,
       errors: errors,
     );
@@ -194,6 +203,9 @@ class SyncService {
 
     return SyncResult(
       success: errors.isEmpty,
+      message: errors.isEmpty 
+          ? '$syncedCount exploitations synchronisées'
+          : '${errors.length} erreurs lors de la synchronisation',
       syncedCount: syncedCount,
       errors: errors,
     );
