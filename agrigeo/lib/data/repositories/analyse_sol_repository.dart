@@ -1,8 +1,8 @@
+import 'dart:convert';
 import '../../core/errors/failures.dart';
 import '../datasources/api_service.dart';
 import '../datasources/local_database.dart';
 import '../models/analyse_sol_model.dart';
-import '../services/sync_service.dart';
 import '../../core/utils/network_info.dart';
 
 class AnalyseSolRepository {
@@ -43,7 +43,25 @@ class AnalyseSolRepository {
       final localData = await _localDb.getAnalysesSols(
         exploitationId: exploitationId,
       );
-      return localData.map((json) => AnalyseSolModel.fromJson(json)).toList();
+      // Convertir les données locales en modèles
+      return localData.map((json) {
+        // Convertir les champs pour correspondre au modèle
+        return AnalyseSolModel.fromJson({
+          'id': json['id'],
+          'date_prelevement': json['date_prelevement'],
+          'ph': json['ph'],
+          'humidite': json['humidite'],
+          'texture': json['texture'],
+          'azote_n': json['azote_n'],
+          'phosphore_p': json['phosphore_p'],
+          'potassium_k': json['potassium_k'],
+          'observations': json['observations'],
+          'exploitation_id': json['exploitation_id'],
+          'parcelle_id': json['parcelle_id'],
+          'technicien_id': 0, // Valeur par défaut pour données locales
+          'created_at': json['created_at'],
+        });
+      }).toList();
     } catch (e) {
       if (e is Failure) rethrow;
       throw ServerFailure(e.toString());
