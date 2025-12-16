@@ -6,19 +6,28 @@ part 'analyse_sol_model.g.dart';
 @JsonSerializable()
 class AnalyseSolModel {
   final int id;
+  @JsonKey(name: 'date_prelevement')
   final String datePrelevement;
   final double? ph;
   final double? humidite;
   final String? texture;
+  @JsonKey(name: 'azote_n')
   final double? azoteN;
+  @JsonKey(name: 'phosphore_p')
   final double? phosphoreP;
+  @JsonKey(name: 'potassium_k')
   final double? potassiumK;
   final String? observations;
+  @JsonKey(name: 'exploitation_id')
   final int exploitationId;
+  @JsonKey(name: 'parcelle_id')
   final int? parcelleId;
+  @JsonKey(name: 'technicien_id')
   final int technicienId;
   final UserModel? technicien;
+  @JsonKey(name: 'created_at')
   final String? createdAt;
+  @JsonKey(name: 'updated_at')
   final String? updatedAt;
 
   AnalyseSolModel({

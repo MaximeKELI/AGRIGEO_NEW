@@ -7,9 +7,13 @@ class ParcelleModel {
   final int id;
   final String nom;
   final double superficie;
+  @JsonKey(name: 'type_culture')
   final String? typeCulture;
+  @JsonKey(name: 'exploitation_id')
   final int exploitationId;
+  @JsonKey(name: 'created_at')
   final String? createdAt;
+  @JsonKey(name: 'updated_at')
   final String? updatedAt;
 
   ParcelleModel({
