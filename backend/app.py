@@ -30,6 +30,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///agr
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialisation des extensions
+db.init_app(app)
 CORS(app)
 jwt = JWTManager(app)
 api = Api(app)

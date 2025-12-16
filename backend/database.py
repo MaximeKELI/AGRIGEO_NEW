@@ -2,7 +2,6 @@
 Configuration de la base de données SQLite avec SQLAlchemy
 """
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
 
 db = SQLAlchemy()
 
