@@ -8,6 +8,7 @@ import 'presentation/providers/recommandation_provider.dart';
 import 'presentation/providers/parcelle_provider.dart';
 import 'presentation/providers/sync_provider.dart';
 import 'presentation/providers/meteo_provider.dart';
+import 'presentation/providers/chat_provider.dart';
 import 'presentation/screens/login_screen.dart';
 import 'presentation/screens/home_screen.dart';
 
