@@ -503,11 +503,10 @@ class _RecoltesScreenState extends State<RecoltesScreen> {
               // Prévision si exploitation et culture sélectionnés
               if (_selectedExploitationId != null && _selectedTypeCulture != null) ...[
                 const SizedBox(height: 16),
-                FutureBuilder<RecoltePrevision>(
-                  future: provider.loadPrevision(
-                    exploitationId: _selectedExploitationId!,
-                    typeCulture: _selectedTypeCulture!,
-                  ).then((_) => provider.prevision),
+                Consumer<RecolteProvider>(
+                  builder: (context, recolteProvider, _) {
+                    if (recolteProvider.prevision != null) {
+                      final prevision = recolteProvider.prevision!;
                   builder: (context, snapshot) {
                     if (snapshot.hasData && snapshot.data != null) {
                       final prevision = snapshot.data!;
@@ -561,6 +560,7 @@ class _RecoltesScreenState extends State<RecoltesScreen> {
                     }
                     return const SizedBox.shrink();
                   },
+                ),
                 ),
               ],
             ],
