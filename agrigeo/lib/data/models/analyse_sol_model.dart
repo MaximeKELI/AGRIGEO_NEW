@@ -25,6 +25,12 @@ class AnalyseSolModel {
   @JsonKey(name: 'technicien_id')
   final int technicienId;
   final UserModel? technicien;
+  @JsonKey(name: 'sensor_data')
+  final Map<String, dynamic>? sensorData; // Données brutes des capteurs
+  @JsonKey(name: 'sensor_ids')
+  final List<String>? sensorIds; // Liste des IDs de capteurs utilisés
+  @JsonKey(name: 'data_source')
+  final String? dataSource; // 'manual', 'sensor', 'mixed'
   @JsonKey(name: 'created_at')
   final String? createdAt;
   @JsonKey(name: 'updated_at')
@@ -44,6 +50,9 @@ class AnalyseSolModel {
     this.parcelleId,
     required this.technicienId,
     this.technicien,
+    this.sensorData,
+    this.sensorIds,
+    this.dataSource,
     this.createdAt,
     this.updatedAt,
   });

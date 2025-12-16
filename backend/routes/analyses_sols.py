@@ -7,9 +7,11 @@ from datetime import datetime
 from database import db
 from models.analyse_sol import AnalyseSol
 from models.exploitation import Exploitation
+from models.sensor import SensorData
 from utils.historique import log_action
 from utils.validators import validate_analyse_sol_data
 from routes.utils import get_pagination_params, paginate_query
+import json
 
 analyses_sols_bp = Blueprint('analyses_sols', __name__)
 
@@ -58,6 +60,45 @@ def create_analyse():
         # Parser la date
         date_prelevement = datetime.strptime(data['date_prelevement'], '%Y-%m-%d').date()
         
+        # Traiter les données de capteurs si présentes
+        sensor_data_json = None
+        sensor_ids_list = []
+        data_source = 'manual'
+        
+        if 'sensor_data' in data and data['sensor_data']:
+            # Si des données de capteurs sont fournies, les intégrer
+            sensor_data_list = data['sensor_data'] if isinstance(data['sensor_data'], list) else [data['sensor_data']]
+            
+            # Convertir les données de capteurs en données d'analyse
+            for sensor_data_item in sensor_data_list:
+                sensor_id = sensor_data_item.get('sensor_id')
+                sensor_type = sensor_data_item.get('sensor_type', '').lower()
+                value = sensor_data_item.get('value')
+                
+                if sensor_id:
+                    sensor_ids_list.append(sensor_id)
+                
+                # Mapper les données de capteurs aux champs d'analyse
+                if sensor_type in ['soil_moisture', 'humidite'] and value is not None:
+                    if data.get('humidite') is None:
+                        data['humidite'] = value
+                elif sensor_type == 'ph' and value is not None:
+                    if data.get('ph') is None:
+                        data['ph'] = value
+                elif sensor_type in ['nitrogen', 'azote', 'n'] and value is not None:
+                    if data.get('azote_n') is None:
+                        data['azote_n'] = value
+                elif sensor_type in ['phosphorus', 'phosphore', 'p'] and value is not None:
+                    if data.get('phosphore_p') is None:
+                        data['phosphore_p'] = value
+                elif sensor_type in ['potassium', 'k'] and value is not None:
+                    if data.get('potassium_k') is None:
+                        data['potassium_k'] = value
+            
+            if sensor_data_list:
+                sensor_data_json = json.dumps(sensor_data_list)
+                data_source = 'sensor' if not any([data.get('ph'), data.get('humidite'), data.get('azote_n'), data.get('phosphore_p'), data.get('potassium_k')]) else 'mixed'
+        
         analyse = AnalyseSol(
             date_prelevement=date_prelevement,
             ph=data.get('ph'),
@@ -69,7 +110,10 @@ def create_analyse():
             observations=data.get('observations'),
             exploitation_id=data['exploitation_id'],
             parcelle_id=data.get('parcelle_id'),
-            technicien_id=user_id
+            technicien_id=user_id,
+            sensor_data=sensor_data_json,
+            sensor_ids=json.dumps(sensor_ids_list) if sensor_ids_list else None,
+            data_source=data_source
         )
         
         db.session.add(analyse)

@@ -3,6 +3,7 @@ Modèle pour les analyses de sol
 """
 from database import db
 from datetime import datetime
+import json
 
 class AnalyseSol(db.Model):
     """Analyse de sol d'une parcelle"""
@@ -20,10 +21,29 @@ class AnalyseSol(db.Model):
     exploitation_id = db.Column(db.Integer, db.ForeignKey('exploitations.id'), nullable=False)
     parcelle_id = db.Column(db.Integer, db.ForeignKey('parcelles.id'))
     technicien_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    # Données de capteurs
+    sensor_data = db.Column(db.Text)  # JSON des données de capteurs utilisées
+    sensor_ids = db.Column(db.Text)  # Liste des IDs de capteurs (JSON array)
+    data_source = db.Column(db.String(50), default='manual')  # 'manual', 'sensor', 'mixed'
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     def to_dict(self):
+        sensor_data_dict = None
+        sensor_ids_list = None
+        
+        if self.sensor_data:
+            try:
+                sensor_data_dict = json.loads(self.sensor_data)
+            except:
+                sensor_data_dict = None
+                
+        if self.sensor_ids:
+            try:
+                sensor_ids_list = json.loads(self.sensor_ids)
+            except:
+                sensor_ids_list = None
+        
         return {
             'id': self.id,
             'date_prelevement': self.date_prelevement.isoformat() if self.date_prelevement else None,
@@ -38,6 +58,9 @@ class AnalyseSol(db.Model):
             'parcelle_id': self.parcelle_id,
             'technicien_id': self.technicien_id,
             'technicien': self.technicien.to_dict() if self.technicien else None,
+            'sensor_data': sensor_data_dict,
+            'sensor_ids': sensor_ids_list,
+            'data_source': self.data_source,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }
