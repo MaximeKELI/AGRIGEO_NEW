@@ -24,6 +24,12 @@ AnalyseSolModel _$AnalyseSolModelFromJson(Map<String, dynamic> json) =>
           json['technicien'] == null
               ? null
               : UserModel.fromJson(json['technicien'] as Map<String, dynamic>),
+      sensorData: json['sensor_data'] as Map<String, dynamic>?,
+      sensorIds:
+          (json['sensor_ids'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList(),
+      dataSource: json['data_source'] as String?,
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
     );
@@ -43,6 +49,9 @@ Map<String, dynamic> _$AnalyseSolModelToJson(AnalyseSolModel instance) =>
       'parcelle_id': instance.parcelleId,
       'technicien_id': instance.technicienId,
       'technicien': instance.technicien,
+      'sensor_data': instance.sensorData,
+      'sensor_ids': instance.sensorIds,
+      'data_source': instance.dataSource,
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
     };
