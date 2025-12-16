@@ -16,7 +16,10 @@ class ImageAnalysisProvider with ChangeNotifier {
   AnalysisType _selectedAnalysisType = AnalysisType.general;
 
   ImageAnalysisProvider({ImageAnalysisService? service})
-      : _service = service ?? ImageAnalysisService();
+      : _service = service ?? ImageAnalysisService() {
+    // Charger les credentials au démarrage
+    loadCredentials();
+  }
 
   File? get selectedImage => _selectedImage;
   ImageAnalysisResultModel? get lastAnalysisResult => _lastAnalysisResult;
