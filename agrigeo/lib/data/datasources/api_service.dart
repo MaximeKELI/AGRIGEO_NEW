@@ -407,5 +407,113 @@ class ApiService {
       throw _handleError(e);
     }
   }
+
+  // Recoltes endpoints
+  Future<Response> getRecoltes({
+    int? exploitationId,
+    int? parcelleId,
+    String? typeCulture,
+    int? annee,
+    int? mois,
+  }) async {
+    try {
+      await _addAuthHeader();
+      final queryParams = <String, dynamic>{};
+      if (exploitationId != null) queryParams['exploitation_id'] = exploitationId;
+      if (parcelleId != null) queryParams['parcelle_id'] = parcelleId;
+      if (typeCulture != null) queryParams['type_culture'] = typeCulture;
+      if (annee != null) queryParams['annee'] = annee;
+      if (mois != null) queryParams['mois'] = mois;
+      
+      final response = await _dio.get(
+        ApiConstants.recoltes,
+        queryParameters: queryParams.isEmpty ? null : queryParams,
+      );
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Response> createRecolte(Map<String, dynamic> data) async {
+    try {
+      await _addAuthHeader();
+      final response = await _dio.post(ApiConstants.recoltes, data: data);
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Response> updateRecolte(int id, Map<String, dynamic> data) async {
+    try {
+      await _addAuthHeader();
+      final response = await _dio.put('${ApiConstants.recoltes}/$id', data: data);
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Response> deleteRecolte(int id) async {
+    try {
+      await _addAuthHeader();
+      final response = await _dio.delete('${ApiConstants.recoltes}/$id');
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Response> getRecolteStatistics({
+    int? exploitationId,
+    String? typeCulture,
+    int? annee,
+  }) async {
+    try {
+      await _addAuthHeader();
+      final queryParams = <String, dynamic>{};
+      if (exploitationId != null) queryParams['exploitation_id'] = exploitationId;
+      if (typeCulture != null) queryParams['type_culture'] = typeCulture;
+      if (annee != null) queryParams['annee'] = annee;
+      
+      final response = await _dio.get(
+        ApiConstants.recoltesStatistics,
+        queryParameters: queryParams.isEmpty ? null : queryParams,
+      );
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Response> getRecoltePrevision({
+    required int exploitationId,
+    required String typeCulture,
+  }) async {
+    try {
+      await _addAuthHeader();
+      final response = await _dio.get(
+        ApiConstants.recoltesPrevision,
+        queryParameters: {
+          'exploitation_id': exploitationId,
+          'type_culture': typeCulture,
+        },
+      );
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Response> importRecoltes(Map<String, dynamic> data) async {
+    try {
+      await _addAuthHeader();
+      final response = await _dio.post(ApiConstants.recoltesImport, data: data);
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
 }
 
