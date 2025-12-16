@@ -10,6 +10,7 @@ class AppConstants {
   static const String openWeatherAgroApiKey = 'openweather_agro_api_key';
   static const String geminiApiKey = 'gemini_api_key';
   static const String sentinelHubApiKey = 'sentinel_hub_api_key';
+  static const String sentinelHubApiSecret = 'sentinel_hub_api_secret';
   
   // Database
   static const String databaseName = 'agrigeo.db';
