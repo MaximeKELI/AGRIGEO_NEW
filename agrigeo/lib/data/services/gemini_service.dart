@@ -18,7 +18,8 @@ class GeminiService {
   }
 
   /// Système prompt pour limiter le chatbot à l'agriculture
-  String get _systemPrompt => '''
+  String _buildSystemPrompt(Map<String, dynamic>? contextData) {
+    String prompt = '''
 Tu es un assistant agricole expert spécialisé dans l'agriculture au Togo et en Afrique. 
 Tu ne dois parler QUE d'agriculture, de gestion des sols, de cultures, d'irrigation, d'intrants, et de pratiques agricoles.
 Si on te pose une question qui n'est pas liée à l'agriculture, tu dois poliment rediriger la conversation vers l'agriculture.
@@ -34,6 +35,38 @@ Tu peux aider avec :
 
 Réponds toujours en français et de manière professionnelle et pédagogique.
 ''';
+    
+    if (contextData != null) {
+      prompt += '\n\nContexte de l\'application AGRIGEO:\n';
+      
+      if (contextData['exploitation'] != null) {
+        final exp = contextData['exploitation'];
+        prompt += '- Exploitation: ${exp['nom'] ?? 'N/A'}, Superficie: ${exp['superficie_totale'] ?? 'N/A'} ha\n';
+        if (exp['type_culture_principal'] != null) {
+          prompt += '- Type de culture: ${exp['type_culture_principal']}\n';
+        }
+      }
+      
+      if (contextData['derniere_analyse'] != null) {
+        final analyse = contextData['derniere_analyse'];
+        prompt += '\nDernière analyse de sol:\n';
+        if (analyse['ph'] != null) prompt += '- pH: ${analyse['ph']}\n';
+        if (analyse['azote_n'] != null) prompt += '- Azote (N): ${analyse['azote_n']} mg/kg\n';
+        if (analyse['phosphore_p'] != null) prompt += '- Phosphore (P): ${analyse['phosphore_p']} mg/kg\n';
+        if (analyse['potassium_k'] != null) prompt += '- Potassium (K): ${analyse['potassium_k']} mg/kg\n';
+      }
+      
+      if (contextData['meteo'] != null) {
+        final meteo = contextData['meteo'];
+        prompt += '\nMétéo actuelle:\n';
+        if (meteo['temperature'] != null) prompt += '- Température: ${meteo['temperature']}°C\n';
+        if (meteo['pluviometrie'] != null) prompt += '- Pluviométrie: ${meteo['pluviometrie']} mm\n';
+        if (meteo['humidite'] != null) prompt += '- Humidité: ${meteo['humidite']}%\n';
+      }
+    }
+    
+    return prompt;
+  }
 
   /// Envoie un message au chatbot Gemini
   Future<String> sendMessage(
@@ -41,59 +74,27 @@ Réponds toujours en français et de manière professionnelle et pédagogique.
     List<ChatMessageModel>? conversationHistory,
     Map<String, dynamic>? contextData,
   }) async {
-    if (_apiKey == null) {
+    if (_apiKey == null || _apiKey!.isEmpty) {
       throw Exception('Clé API Gemini non configurée');
     }
 
     try {
-      // Construire le contexte avec les données de l'application
-      String contextPrompt = _systemPrompt;
-      
-      if (contextData != null) {
-        contextPrompt += '\n\nContexte de l\'application AGRIGEO:\n';
-        
-        if (contextData['exploitation'] != null) {
-          final exp = contextData['exploitation'];
-          contextPrompt += '- Exploitation: ${exp['nom'] ?? 'N/A'}, Superficie: ${exp['superficie_totale'] ?? 'N/A'} ha\n';
-          if (exp['type_culture_principal'] != null) {
-            contextPrompt += '- Type de culture: ${exp['type_culture_principal']}\n';
-          }
-        }
-        
-        if (contextData['derniere_analyse'] != null) {
-          final analyse = contextData['derniere_analyse'];
-          contextPrompt += '\nDernière analyse de sol:\n';
-          if (analyse['ph'] != null) contextPrompt += '- pH: ${analyse['ph']}\n';
-          if (analyse['azote_n'] != null) contextPrompt += '- Azote (N): ${analyse['azote_n']} mg/kg\n';
-          if (analyse['phosphore_p'] != null) contextPrompt += '- Phosphore (P): ${analyse['phosphore_p']} mg/kg\n';
-          if (analyse['potassium_k'] != null) contextPrompt += '- Potassium (K): ${analyse['potassium_k']} mg/kg\n';
-        }
-        
-        if (contextData['meteo'] != null) {
-          final meteo = contextData['meteo'];
-          contextPrompt += '\nMétéo actuelle:\n';
-          if (meteo['temperature'] != null) contextPrompt += '- Température: ${meteo['temperature']}°C\n';
-          if (meteo['pluviometrie'] != null) contextPrompt += '- Pluviométrie: ${meteo['pluviometrie']} mm\n';
-          if (meteo['humidite'] != null) contextPrompt += '- Humidité: ${meteo['humidite']}%\n';
-        }
-      }
+      // Construire le prompt système avec le contexte
+      final systemPrompt = _buildSystemPrompt(contextData);
 
-      // Construire l'historique de conversation
+      // Construire l'historique de conversation (sans le message de bienvenue système)
       final List<Map<String, dynamic>> contents = [];
       
-      // Ajouter le contexte système comme premier message
-      contents.add({
-        'role': 'user',
-        'parts': [{'text': contextPrompt}]
-      });
-      contents.add({
-        'role': 'model',
-        'parts': [{'text': 'Bonjour ! Je suis votre assistant agricole AGRIGEO. Je suis là pour vous aider avec toutes vos questions sur l\'agriculture, la gestion des sols, l\'irrigation et les pratiques agricoles. Comment puis-je vous aider aujourd\'hui ?'}]
-      });
-
-      // Ajouter l'historique de conversation
       if (conversationHistory != null && conversationHistory.isNotEmpty) {
-        for (final msg in conversationHistory) {
+        // Filtrer pour ne garder que les messages user/assistant réels
+        final filteredHistory = conversationHistory.where((msg) => 
+          msg.role == MessageRole.user || 
+          (msg.role == MessageRole.assistant && 
+           msg.content.isNotEmpty && 
+           !msg.content.contains('Bonjour ! Je suis votre assistant'))
+        ).toList();
+        
+        for (final msg in filteredHistory) {
           if (msg.role == MessageRole.user || msg.role == MessageRole.assistant) {
             contents.add({
               'role': msg.role == MessageRole.user ? 'user' : 'model',
@@ -109,45 +110,85 @@ Réponds toujours en français et de manière professionnelle et pédagogique.
         'parts': [{'text': userMessage}]
       });
 
-      // Appel à l'API Gemini
-      final response = await _dio.post(
-        '$_baseUrl/models/gemini-pro:generateContent?key=$_apiKey',
-        data: {
-          'contents': contents,
-          'generationConfig': {
-            'temperature': 0.7,
-            'topK': 40,
-            'topP': 0.95,
-            'maxOutputTokens': 1024,
-          },
+      // Préparer les données de la requête
+      final requestData = <String, dynamic>{
+        'contents': contents,
+        'systemInstruction': {
+          'parts': [{'text': systemPrompt}]
         },
+        'generationConfig': {
+          'temperature': 0.7,
+          'topK': 40,
+          'topP': 0.95,
+          'maxOutputTokens': 2048,
+        },
+      };
+
+      // Appel à l'API Gemini (utiliser gemini-2.5-flash qui est disponible)
+      final response = await _dio.post(
+        '$_baseUrl/models/gemini-2.5-flash:generateContent?key=$_apiKey',
+        data: requestData,
         options: Options(
           headers: {'Content-Type': 'application/json'},
+          validateStatus: (status) => status! < 500,
         ),
       );
 
+      // Vérifier les erreurs HTTP
+      if (response.statusCode != 200) {
+        if (response.data != null && response.data['error'] != null) {
+          final error = response.data['error'];
+          throw Exception('Erreur Gemini API: ${error['message'] ?? 'Erreur inconnue'} (Code: ${error['code'] ?? response.statusCode})');
+        }
+        throw Exception('Erreur HTTP ${response.statusCode}: ${response.statusMessage}');
+      }
+
       // Extraire la réponse
+      if (response.data == null) {
+        throw Exception('Réponse vide de l\'API');
+      }
+      
       final candidates = response.data['candidates'] as List?;
       if (candidates == null || candidates.isEmpty) {
-        throw Exception('Aucune réponse du modèle');
+        // Vérifier s'il y a une erreur dans la réponse
+        if (response.data['error'] != null) {
+          final error = response.data['error'];
+          throw Exception('Erreur API: ${error['message'] ?? 'Erreur inconnue'}');
+        }
+        throw Exception('Aucune réponse du modèle. Réponse: ${response.data}');
       }
 
       final content = candidates[0]['content'];
-      final parts = content['parts'] as List;
-      if (parts.isEmpty) {
+      if (content == null) {
+        throw Exception('Contenu vide dans la réponse');
+      }
+      
+      final parts = content['parts'] as List?;
+      if (parts == null || parts.isEmpty) {
         throw Exception('Réponse vide du modèle');
       }
 
-      return parts[0]['text'] as String;
+      final textPart = parts[0]['text'];
+      if (textPart == null || textPart.toString().isEmpty) {
+        throw Exception('Texte vide dans la réponse');
+      }
+
+      return textPart.toString();
     } on DioException catch (e) {
       if (e.response != null) {
         final errorData = e.response!.data;
-        throw Exception('Erreur Gemini API: ${errorData['error']?['message'] ?? e.message}');
+        if (errorData is Map && errorData['error'] != null) {
+          final error = errorData['error'];
+          throw Exception('Erreur Gemini API: ${error['message'] ?? e.message}');
+        }
+        throw Exception('Erreur API: ${errorData.toString()}');
       }
       throw Exception('Erreur de connexion: ${e.message}');
     } catch (e) {
+      if (e.toString().contains('Exception')) {
+        rethrow;
+      }
       throw Exception('Erreur inattendue: ${e.toString()}');
     }
   }
 }
-

@@ -128,6 +128,33 @@ class _ChatScreenState extends State<ChatScreen> {
           Expanded(
             child: Consumer<ChatProvider>(
               builder: (context, provider, _) {
+                // Afficher les erreurs
+                if (provider.error != null) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                        const SizedBox(height: 16),
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Text(
+                            provider.error!,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 16, color: Colors.red),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            provider.clearError();
+                          },
+                          child: const Text('Réessayer'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                
                 if (provider.messages.isEmpty) {
                   return const Center(
                     child: Column(
