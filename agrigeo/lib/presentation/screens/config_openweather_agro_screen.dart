@@ -82,8 +82,15 @@ class _ConfigOpenWeatherAgroScreenState extends State<ConfigOpenWeatherAgroScree
 
   Future<void> _openAgroMonitoringWebsite() async {
     final uri = Uri.parse('https://agromonitoring.com/api/get');
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Impossible d\'ouvrir le lien'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
     }
   }
 
