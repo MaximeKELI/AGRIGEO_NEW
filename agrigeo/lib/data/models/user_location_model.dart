@@ -70,12 +70,12 @@ class UserLocationModel {
     final double deltaLatRad = (other.latitude - latitude) * (3.141592653589793 / 180);
     final double deltaLonRad = (other.longitude - longitude) * (3.141592653589793 / 180);
 
-    final double a = (deltaLatRad / 2).sin() * (deltaLatRad / 2).sin() +
-        lat1Rad.cos() *
-            lat2Rad.cos() *
-            (deltaLonRad / 2).sin() *
-            (deltaLonRad / 2).sin();
-    final double c = 2 * a.sqrt().asin();
+    final double a = math.sin(deltaLatRad / 2) * math.sin(deltaLatRad / 2) +
+        math.cos(lat1Rad) *
+            math.cos(lat2Rad) *
+            math.sin(deltaLonRad / 2) *
+            math.sin(deltaLonRad / 2);
+    final double c = 2 * math.asin(math.sqrt(a));
 
     return earthRadius * c;
   }
