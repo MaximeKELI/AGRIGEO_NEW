@@ -21,6 +21,7 @@ from routes.intrants import intrants_bp
 from routes.recommandations import recommandations_bp
 from routes.meteo import meteo_bp
 from routes.sensors import sensors_bp
+from routes.recoltes import recoltes_bp
 
 load_dotenv()
 
