@@ -42,6 +42,8 @@ class _ImageAnalysisScreenState extends State<ImageAnalysisScreen> {
     }
   }
 
+  // Méthode conservée pour compatibilité mais non utilisée (boutons directs maintenant)
+  @Deprecated('Utiliser directement _pickImage')
   void _showImageSourceDialog() {
     showModalBottomSheet(
       context: context,
@@ -128,43 +130,85 @@ class _ImageAnalysisScreenState extends State<ImageAnalysisScreen> {
 
   Widget _buildImageSelectionSection(ImageAnalysisProvider provider) {
     return Card(
+      elevation: 4,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Sélectionner une image',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            if (provider.selectedImage == null)
-              GestureDetector(
-                onTap: _showImageSourceDialog,
-                child: Container(
-                  height: 200,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey, style: BorderStyle.solid),
-                    borderRadius: BorderRadius.circular(12),
-                    color: Colors.grey[100],
-                  ),
-                  child: const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.add_photo_alternate, size: 64, color: Colors.grey),
-                      SizedBox(height: 8),
-                      Text(
-                        'Appuyez pour sélectionner une image',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ],
+            Row(
+              children: [
+                const Icon(Icons.camera_alt, color: Colors.green),
+                const SizedBox(width: 8),
+                const Text(
+                  'Sélectionner une image',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              )
-            else
+              ],
+            ),
+            const SizedBox(height: 16),
+            
+            // Boutons de sélection d'image (toujours visibles)
+            if (provider.selectedImage == null) ...[
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () => _pickImage(ImageSource.camera),
+                      icon: const Icon(Icons.camera_alt, size: 24),
+                      label: const Text('Prendre une photo'),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () => _pickImage(ImageSource.gallery),
+                      icon: const Icon(Icons.photo_library, size: 24),
+                      label: const Text('Galerie'),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Container(
+                height: 200,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey[300]!, style: BorderStyle.solid, width: 2),
+                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.grey[50],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.add_photo_alternate, size: 64, color: Colors.grey[400]),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Sélectionnez une image pour commencer',
+                      style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'ou prenez une photo directement',
+                      style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+            ] else ...[
+              // Image sélectionnée
               Stack(
                 children: [
                   ClipRRect(
@@ -179,16 +223,42 @@ class _ImageAnalysisScreenState extends State<ImageAnalysisScreen> {
                   Positioned(
                     top: 8,
                     right: 8,
-                    child: FloatingActionButton.small(
-                      onPressed: _showImageSourceDialog,
-                      backgroundColor: Colors.white,
-                      child: const Icon(Icons.edit, color: Colors.blue),
+                    child: Row(
+                      children: [
+                        FloatingActionButton.small(
+                          onPressed: () => _pickImage(ImageSource.camera),
+                          backgroundColor: Colors.green,
+                          heroTag: 'camera',
+                          child: const Icon(Icons.camera_alt, color: Colors.white),
+                        ),
+                        const SizedBox(width: 8),
+                        FloatingActionButton.small(
+                          onPressed: () => _pickImage(ImageSource.gallery),
+                          backgroundColor: Colors.blue,
+                          heroTag: 'gallery',
+                          child: const Icon(Icons.photo_library, color: Colors.white),
+                        ),
+                        const SizedBox(width: 8),
+                        FloatingActionButton.small(
+                          onPressed: () {
+                            provider.clearImage();
+                            provider.clearResults();
+                          },
+                          backgroundColor: Colors.red,
+                          heroTag: 'delete',
+                          child: const Icon(Icons.delete, color: Colors.white),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
+            ],
+            
             const SizedBox(height: 16),
-            if (provider.selectedImage != null)
+            
+            // Bouton d'analyse
+            if (provider.selectedImage != null) ...[
               ElevatedButton.icon(
                 onPressed: provider.isAnalyzing
                     ? null
@@ -211,14 +281,26 @@ class _ImageAnalysisScreenState extends State<ImageAnalysisScreen> {
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
                       )
-                    : const Icon(Icons.analytics),
-                label: Text(provider.isAnalyzing ? 'Analyse en cours...' : 'Analyser l\'image'),
+                    : const Icon(Icons.analytics, size: 24),
+                label: Text(
+                  provider.isAnalyzing ? 'Analyse en cours...' : 'Analyser l\'image avec IA',
+                  style: const TextStyle(fontSize: 16),
+                ),
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  backgroundColor: Colors.purple,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
+            ],
           ],
         ),
       ),
@@ -323,11 +405,38 @@ class _ImageAnalysisScreenState extends State<ImageAnalysisScreen> {
               const SizedBox(height: 16),
             ],
             
-            // Recommandations
+            // Recommandations et Conseils
             if (result.recommendations != null && result.recommendations!.isNotEmpty) ...[
-              _buildSectionTitle('Recommandations', Icons.lightbulb),
+              _buildSectionTitle('Recommandations et Conseils', Icons.lightbulb),
               const SizedBox(height: 8),
-              ...result.recommendations!.map((rec) => _buildRecommendationCard(rec)),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.blue[50],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.blue[200]!),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.info_outline, color: Colors.blue[700], size: 20),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Conseils basés sur l\'analyse IA',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue[900],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    ...result.recommendations!.map((rec) => _buildRecommendationCard(rec)),
+                  ],
+                ),
+              ),
             ],
           ],
         ),
@@ -512,47 +621,141 @@ class _ImageAnalysisScreenState extends State<ImageAnalysisScreen> {
 
   Widget _buildRecommendationCard(Recommendation recommendation) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      color: _getPriorityColor(recommendation.priority),
-      child: ListTile(
-        leading: Icon(
-          Icons.lightbulb,
-          color: _getPriorityIconColor(recommendation.priority),
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: _getPriorityIconColor(recommendation.priority).withValues(alpha: 0.3),
+          width: 2,
         ),
-        title: Text(
-          recommendation.title,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Column(
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 4),
-            Text(recommendation.description),
-            const SizedBox(height: 8),
             Row(
               children: [
-                Chip(
-                  label: Text(recommendation.category),
-                  labelStyle: const TextStyle(fontSize: 11),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: _getPriorityIconColor(recommendation.priority).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.lightbulb,
+                    color: _getPriorityIconColor(recommendation.priority),
+                    size: 24,
+                  ),
                 ),
-                const SizedBox(width: 8),
-                Chip(
-                  label: Text('Priorité: ${recommendation.priority}'),
-                  labelStyle: const TextStyle(fontSize: 11),
-                  backgroundColor: _getPriorityColor(recommendation.priority),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        recommendation.title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Chip(
+                            label: Text(
+                              recommendation.category.toUpperCase(),
+                              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                            ),
+                            labelPadding: const EdgeInsets.symmetric(horizontal: 8),
+                            backgroundColor: Colors.grey[200],
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: _getPriorityColor(recommendation.priority),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              'Priorité: ${recommendation.priority}',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: _getPriorityIconColor(recommendation.priority),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-            if (recommendation.actions != null && recommendation.actions!.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              const Text(
-                'Actions:',
-                style: TextStyle(fontWeight: FontWeight.bold),
+            const SizedBox(height: 12),
+            Text(
+              recommendation.description,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[700],
+                height: 1.5,
               ),
-              ...recommendation.actions!.map((action) => Padding(
-                    padding: const EdgeInsets.only(left: 16, top: 4),
-                    child: Text('• $action'),
-                  )),
+            ),
+            if (recommendation.actions != null && recommendation.actions!.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.checklist, size: 18, color: Colors.grey[700]),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Actions recommandées:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    ...recommendation.actions!.map((action) => Padding(
+                          padding: const EdgeInsets.only(left: 8, top: 6),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(
+                                Icons.arrow_right,
+                                size: 16,
+                                color: Colors.green[700],
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  action,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey[800],
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )),
+                  ],
+                ),
+              ),
             ],
           ],
         ),
