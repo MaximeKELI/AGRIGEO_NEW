@@ -154,7 +154,7 @@ class _LocationDisplayWidgetState extends State<LocationDisplayWidget> {
                       if (location.accuracy != null) ...[
                         const SizedBox(height: 8),
                         _buildInfoRow(
-                          Icons.accuracy_high,
+                          Icons.gps_fixed,
                           'Précision',
                           '${location.accuracy!.toStringAsFixed(1)} m',
                         ),
