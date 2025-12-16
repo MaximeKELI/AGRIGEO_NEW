@@ -43,9 +43,9 @@ void main() {
         requestOptions: RequestOptions(path: ''),
       );
 
-      when(mockApiService.login('testuser', 'password123'))
+      when(() => mockApiService.login('testuser', 'password123'))
           .thenAnswer((_) async => response);
-      when(mockStorage.write(key: anyNamed('key'), value: anyNamed('value')))
+      when(() => mockStorage.write(key: any(named: 'key'), value: any(named: 'value')))
           .thenAnswer((_) async => {});
 
       // Act
