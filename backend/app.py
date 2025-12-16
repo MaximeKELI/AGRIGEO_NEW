@@ -67,5 +67,6 @@ def health_check():
 if __name__ == '__main__':
     with app.app_context():
         init_db()
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Désactiver le reloader pour éviter les problèmes avec watchdog
+    app.run(debug=True, host='0.0.0.0', port=5000, use_reloader=False)
 
