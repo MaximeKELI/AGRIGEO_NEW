@@ -285,5 +285,19 @@ class ApiService {
       throw _handleError(e);
     }
   }
+
+  // Météo et irrigation endpoints
+  Future<Response> generateConseilsIrrigation(int exploitationId, Map<String, dynamic> meteoData) async {
+    try {
+      await _addAuthHeader();
+      final response = await _dio.post(
+        '/api/meteo/conseils-irrigation/$exploitationId',
+        data: meteoData,
+      );
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
 }
 
