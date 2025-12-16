@@ -84,14 +84,14 @@ class _AnimatedButtonState extends State<AnimatedButton>
               const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           decoration: BoxDecoration(
             color: widget.onPressed == null || widget.isLoading
-                ? bgColor.withOpacity(0.5)
+                ? bgColor.withValues(alpha: 0.5)
                 : bgColor,
             borderRadius: BorderRadius.circular(widget.borderRadius!),
             boxShadow: _isPressed
                 ? []
                 : [
                     BoxShadow(
-                      color: bgColor.withOpacity(0.3),
+                      color: bgColor.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),

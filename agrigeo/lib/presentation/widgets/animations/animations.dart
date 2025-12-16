@@ -1,4 +1,4 @@
-/// Export de tous les widgets d'animation pour faciliter l'importation
+// Export de tous les widgets d'animation pour faciliter l'importation
 export 'fade_in_widget.dart';
 export 'slide_in_widget.dart';
 export 'scale_in_widget.dart';
