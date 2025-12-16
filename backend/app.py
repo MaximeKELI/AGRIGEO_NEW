@@ -59,6 +59,7 @@ app.register_blueprint(intrants_bp, url_prefix='/api/intrants')
 app.register_blueprint(recommandations_bp, url_prefix='/api/recommandations')
 app.register_blueprint(meteo_bp, url_prefix='/api/meteo')
 app.register_blueprint(sensors_bp, url_prefix='/api/sensors')
+app.register_blueprint(recoltes_bp, url_prefix='/api/recoltes')
 
 @app.route('/api/health')
 def health_check():
