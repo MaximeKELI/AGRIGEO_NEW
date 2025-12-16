@@ -19,6 +19,7 @@ from routes.analyses_sols import analyses_sols_bp
 from routes.donnees_climatiques import donnees_climatiques_bp
 from routes.intrants import intrants_bp
 from routes.recommandations import recommandations_bp
+from routes.meteo import meteo_bp
 
 load_dotenv()
 

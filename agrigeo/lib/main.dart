@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RecommandationProvider()),
         ChangeNotifierProvider(create: (_) => ParcelleProvider()),
         ChangeNotifierProvider(create: (_) => SyncProvider()),
+        ChangeNotifierProvider(create: (_) => MeteoProvider()),
       ],
       child: MaterialApp(
         title: 'AGRIGEO',

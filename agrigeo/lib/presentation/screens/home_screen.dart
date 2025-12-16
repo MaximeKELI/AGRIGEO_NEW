@@ -5,6 +5,7 @@ import '../providers/exploitation_provider.dart';
 import 'exploitations_list_screen.dart';
 import 'analyses_list_screen.dart';
 import 'recommandations_screen.dart';
+import 'meteo_screen.dart';
 import 'login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -51,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ExploitationsListScreen(),
           AnalysesListScreen(),
           RecommandationsScreen(),
-          Placeholder(), // Profil
+          MeteoScreen(), // Météo
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -76,8 +77,8 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Recommandations',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profil',
+            icon: Icon(Icons.cloud),
+            label: 'Météo',
           ),
         ],
       ),
