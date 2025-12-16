@@ -7,6 +7,7 @@ class AppConstants {
   static const String tokenKey = 'auth_token';
   static const String userKey = 'user_data';
   static const String openWeatherApiKey = 'openweather_api_key';
+  static const String geminiApiKey = 'gemini_api_key';
   
   // Database
   static const String databaseName = 'agrigeo.db';

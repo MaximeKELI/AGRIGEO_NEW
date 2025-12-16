@@ -26,14 +26,6 @@ class _HomeScreenState extends State<HomeScreen> {
     // Configurer la clé API Gemini au démarrage
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ChatProvider>(context, listen: false).setApiKey('AIzaSyCwt5NygybBr9oasALOG7Ht-XhM2Dk-sIk');
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // Charger les exploitations au démarrage
-    WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ExploitationProvider>(context, listen: false).loadExploitations();
     });
   }
