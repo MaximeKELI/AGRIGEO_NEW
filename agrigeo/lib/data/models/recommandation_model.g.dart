@@ -9,30 +9,30 @@ part of 'recommandation_model.dart';
 RecommandationModel _$RecommandationModelFromJson(Map<String, dynamic> json) =>
     RecommandationModel(
       id: (json['id'] as num).toInt(),
-      typeRecommandation: json['typeRecommandation'] as String,
+      typeRecommandation: json['type_recommandation'] as String,
       titre: json['titre'] as String,
       description: json['description'] as String,
-      parametresUtilises: json['parametresUtilises'] as String?,
+      parametresUtilises: json['parametres_utilises'] as String?,
       priorite: json['priorite'] as String,
       statut: json['statut'] as String,
-      exploitationId: (json['exploitationId'] as num).toInt(),
-      parcelleId: (json['parcelleId'] as num?)?.toInt(),
-      createdAt: json['createdAt'] as String?,
-      updatedAt: json['updatedAt'] as String?,
+      exploitationId: (json['exploitation_id'] as num).toInt(),
+      parcelleId: (json['parcelle_id'] as num?)?.toInt(),
+      createdAt: json['created_at'] as String?,
+      updatedAt: json['updated_at'] as String?,
     );
 
 Map<String, dynamic> _$RecommandationModelToJson(
   RecommandationModel instance,
 ) => <String, dynamic>{
   'id': instance.id,
-  'typeRecommandation': instance.typeRecommandation,
+  'type_recommandation': instance.typeRecommandation,
   'titre': instance.titre,
   'description': instance.description,
-  'parametresUtilises': instance.parametresUtilises,
+  'parametres_utilises': instance.parametresUtilises,
   'priorite': instance.priorite,
   'statut': instance.statut,
-  'exploitationId': instance.exploitationId,
-  'parcelleId': instance.parcelleId,
-  'createdAt': instance.createdAt,
-  'updatedAt': instance.updatedAt,
+  'exploitation_id': instance.exploitationId,
+  'parcelle_id': instance.parcelleId,
+  'created_at': instance.createdAt,
+  'updated_at': instance.updatedAt,
 };

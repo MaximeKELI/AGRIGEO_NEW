@@ -11,10 +11,10 @@ ParcelleModel _$ParcelleModelFromJson(Map<String, dynamic> json) =>
       id: (json['id'] as num).toInt(),
       nom: json['nom'] as String,
       superficie: (json['superficie'] as num).toDouble(),
-      typeCulture: json['typeCulture'] as String?,
-      exploitationId: (json['exploitationId'] as num).toInt(),
-      createdAt: json['createdAt'] as String?,
-      updatedAt: json['updatedAt'] as String?,
+      typeCulture: json['type_culture'] as String?,
+      exploitationId: (json['exploitation_id'] as num).toInt(),
+      createdAt: json['created_at'] as String?,
+      updatedAt: json['updated_at'] as String?,
     );
 
 Map<String, dynamic> _$ParcelleModelToJson(ParcelleModel instance) =>
@@ -22,8 +22,8 @@ Map<String, dynamic> _$ParcelleModelToJson(ParcelleModel instance) =>
       'id': instance.id,
       'nom': instance.nom,
       'superficie': instance.superficie,
-      'typeCulture': instance.typeCulture,
-      'exploitationId': instance.exploitationId,
-      'createdAt': instance.createdAt,
-      'updatedAt': instance.updatedAt,
+      'type_culture': instance.typeCulture,
+      'exploitation_id': instance.exploitationId,
+      'created_at': instance.createdAt,
+      'updated_at': instance.updatedAt,
     };

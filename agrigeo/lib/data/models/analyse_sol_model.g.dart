@@ -9,40 +9,40 @@ part of 'analyse_sol_model.dart';
 AnalyseSolModel _$AnalyseSolModelFromJson(Map<String, dynamic> json) =>
     AnalyseSolModel(
       id: (json['id'] as num).toInt(),
-      datePrelevement: json['datePrelevement'] as String,
+      datePrelevement: json['date_prelevement'] as String,
       ph: (json['ph'] as num?)?.toDouble(),
       humidite: (json['humidite'] as num?)?.toDouble(),
       texture: json['texture'] as String?,
-      azoteN: (json['azoteN'] as num?)?.toDouble(),
-      phosphoreP: (json['phosphoreP'] as num?)?.toDouble(),
-      potassiumK: (json['potassiumK'] as num?)?.toDouble(),
+      azoteN: (json['azote_n'] as num?)?.toDouble(),
+      phosphoreP: (json['phosphore_p'] as num?)?.toDouble(),
+      potassiumK: (json['potassium_k'] as num?)?.toDouble(),
       observations: json['observations'] as String?,
-      exploitationId: (json['exploitationId'] as num).toInt(),
-      parcelleId: (json['parcelleId'] as num?)?.toInt(),
-      technicienId: (json['technicienId'] as num).toInt(),
+      exploitationId: (json['exploitation_id'] as num).toInt(),
+      parcelleId: (json['parcelle_id'] as num?)?.toInt(),
+      technicienId: (json['technicien_id'] as num).toInt(),
       technicien:
           json['technicien'] == null
               ? null
               : UserModel.fromJson(json['technicien'] as Map<String, dynamic>),
-      createdAt: json['createdAt'] as String?,
-      updatedAt: json['updatedAt'] as String?,
+      createdAt: json['created_at'] as String?,
+      updatedAt: json['updated_at'] as String?,
     );
 
 Map<String, dynamic> _$AnalyseSolModelToJson(AnalyseSolModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'datePrelevement': instance.datePrelevement,
+      'date_prelevement': instance.datePrelevement,
       'ph': instance.ph,
       'humidite': instance.humidite,
       'texture': instance.texture,
-      'azoteN': instance.azoteN,
-      'phosphoreP': instance.phosphoreP,
-      'potassiumK': instance.potassiumK,
+      'azote_n': instance.azoteN,
+      'phosphore_p': instance.phosphoreP,
+      'potassium_k': instance.potassiumK,
       'observations': instance.observations,
-      'exploitationId': instance.exploitationId,
-      'parcelleId': instance.parcelleId,
-      'technicienId': instance.technicienId,
+      'exploitation_id': instance.exploitationId,
+      'parcelle_id': instance.parcelleId,
+      'technicien_id': instance.technicienId,
       'technicien': instance.technicien,
-      'createdAt': instance.createdAt,
-      'updatedAt': instance.updatedAt,
+      'created_at': instance.createdAt,
+      'updated_at': instance.updatedAt,
     };
