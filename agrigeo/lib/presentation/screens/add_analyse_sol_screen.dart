@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/exploitation_model.dart';
 import '../../data/models/parcelle_model.dart';
-import '../../data/repositories/exploitation_repository.dart';
+import '../providers/analyse_sol_provider.dart';
 
 class AddAnalyseSolScreen extends StatefulWidget {
   final ExploitationModel exploitation;
@@ -80,14 +80,22 @@ class _AddAnalyseSolScreenState extends State<AddAnalyseSolScreen> {
         if (_observationsController.text.isNotEmpty) 'observations': _observationsController.text.trim(),
       };
 
-      // TODO: Appeler le repository pour sauvegarder
-      // Pour l'instant, on simule
-      if (mounted) {
+      final provider = Provider.of<AnalyseSolProvider>(context, listen: false);
+      final success = await provider.createAnalyse(data);
+
+      if (success && mounted) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Analyse de sol créée avec succès'),
             backgroundColor: Colors.green,
+          ),
+        );
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(provider.error ?? 'Erreur lors de la création'),
+            backgroundColor: Colors.red,
           ),
         );
       }
@@ -251,14 +259,27 @@ class _AddAnalyseSolScreenState extends State<AddAnalyseSolScreen> {
                 maxLines: 4,
               ),
               const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _saveAnalyse,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Text('Enregistrer l\'analyse'),
+              Consumer<AnalyseSolProvider>(
+                builder: (context, provider, _) {
+                  return ElevatedButton(
+                    onPressed: provider.isLoading ? null : _saveAnalyse,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: provider.isLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : const Text('Enregistrer l\'analyse'),
+                  );
+                },
               ),
             ],
           ),

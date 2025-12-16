@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/recommandation_model.dart';
 import '../../data/models/exploitation_model.dart';
+import '../providers/recommandation_provider.dart';
 
 class RecommandationsScreen extends StatelessWidget {
   final ExploitationModel? exploitation;
@@ -13,29 +14,45 @@ class RecommandationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Récupérer les recommandations depuis le provider
-    final recommandations = <RecommandationModel>[]; // Placeholder
+    return Consumer<RecommandationProvider>(
+      builder: (context, provider, _) {
+        if (provider.isLoading && provider.recommandations.isEmpty) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
 
-    return Scaffold(
+        final recommandations = provider.recommandations;
+
+        return Scaffold(
       appBar: AppBar(
         title: const Text('Recommandations'),
         actions: [
           if (exploitation != null)
             IconButton(
               icon: const Icon(Icons.refresh),
-              onPressed: () {
-                // TODO: Générer de nouvelles recommandations
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Génération des recommandations...'),
-                  ),
-                );
-              },
+              onPressed: provider.isGenerating
+                  ? null
+                  : () async {
+                      final success = await provider.generateRecommandations(exploitation!.id);
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(success
+                                ? 'Recommandations générées avec succès'
+                                : provider.error ?? 'Erreur lors de la génération'),
+                            backgroundColor: success ? Colors.green : Colors.red,
+                          ),
+                        );
+                      }
+                    },
               tooltip: 'Générer des recommandations',
             ),
         ],
       ),
-      body: recommandations.isEmpty
+      body: provider.isGenerating
+          ? const Center(child: CircularProgressIndicator())
+          : recommandations.isEmpty
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -55,9 +72,21 @@ class RecommandationsScreen extends StatelessWidget {
                   if (exploitation != null) ...[
                     const SizedBox(height: 24),
                     ElevatedButton.icon(
-                      onPressed: () {
-                        // TODO: Générer recommandations
-                      },
+                      onPressed: provider.isGenerating
+                          ? null
+                          : () async {
+                              final success = await provider.generateRecommandations(exploitation!.id);
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(success
+                                        ? 'Recommandations générées avec succès'
+                                        : provider.error ?? 'Erreur'),
+                                    backgroundColor: success ? Colors.green : Colors.red,
+                                  ),
+                                );
+                              }
+                            },
                       icon: const Icon(Icons.auto_awesome),
                       label: const Text('Générer des recommandations'),
                       style: ElevatedButton.styleFrom(
@@ -155,12 +184,31 @@ class RecommandationsScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     if (rec.statut == 'non_appliquée')
-                      TextButton.icon(
-                        onPressed: () {
-                          // TODO: Marquer comme appliquée
+                      Consumer<RecommandationProvider>(
+                        builder: (context, provider, _) {
+                          return TextButton.icon(
+                            onPressed: provider.isLoading
+                                ? null
+                                : () async {
+                                    final success = await provider.updateRecommandationStatus(
+                                      rec.id,
+                                      'appliquée',
+                                    );
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text(success
+                                              ? 'Recommandation marquée comme appliquée'
+                                              : provider.error ?? 'Erreur'),
+                                          backgroundColor: success ? Colors.green : Colors.red,
+                                        ),
+                                      );
+                                    }
+                                  },
+                            icon: const Icon(Icons.check),
+                            label: const Text('Marquer comme appliquée'),
+                          );
                         },
-                        icon: const Icon(Icons.check),
-                        label: const Text('Marquer comme appliquée'),
                       ),
                   ],
                 ),

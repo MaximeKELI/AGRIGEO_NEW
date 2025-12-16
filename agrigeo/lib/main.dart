@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'presentation/providers/auth_provider.dart';
 import 'presentation/providers/exploitation_provider.dart';
+import 'presentation/providers/analyse_sol_provider.dart';
+import 'presentation/providers/intrant_provider.dart';
+import 'presentation/providers/recommandation_provider.dart';
+import 'presentation/providers/parcelle_provider.dart';
+import 'presentation/providers/sync_provider.dart';
 import 'presentation/screens/login_screen.dart';
 import 'presentation/screens/home_screen.dart';
 
@@ -18,6 +23,11 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => ExploitationProvider()),
+        ChangeNotifierProvider(create: (_) => AnalyseSolProvider()),
+        ChangeNotifierProvider(create: (_) => IntrantProvider()),
+        ChangeNotifierProvider(create: (_) => RecommandationProvider()),
+        ChangeNotifierProvider(create: (_) => ParcelleProvider()),
+        ChangeNotifierProvider(create: (_) => SyncProvider()),
       ],
       child: MaterialApp(
         title: 'AGRIGEO',
