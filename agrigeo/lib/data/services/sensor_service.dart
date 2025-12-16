@@ -1,8 +1,6 @@
 import '../../core/errors/failures.dart';
-import '../../core/constants/app_constants.dart';
 import '../datasources/api_service.dart';
 import '../models/sensor_data_model.dart';
-import 'dart:convert';
 
 /// Service pour gérer les capteurs IoT et leurs données
 class SensorService {
