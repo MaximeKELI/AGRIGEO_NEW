@@ -44,33 +44,6 @@ class _ImageAnalysisScreenState extends State<ImageAnalysisScreen> {
 
   // Méthode conservée pour compatibilité mais non utilisée (boutons directs maintenant)
   @Deprecated('Utiliser directement _pickImage')
-  void _showImageSourceDialog() {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => SafeArea(
-        child: Wrap(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text('Prendre une photo'),
-              onTap: () {
-                Navigator.pop(context);
-                _pickImage(ImageSource.camera);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('Choisir depuis la galerie'),
-              onTap: () {
-                Navigator.pop(context);
-                _pickImage(ImageSource.gallery);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -347,31 +320,49 @@ class _ImageAnalysisScreenState extends State<ImageAnalysisScreen> {
 
   Widget _buildResultsSection(ImageAnalysisResultModel result) {
     return Card(
+      elevation: 4,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                const Icon(Icons.check_circle, color: Colors.green),
-                const SizedBox(width: 8),
-                const Text(
-                  'Résultats de l\'analyse',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.green[50],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.green, size: 32),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Analyse terminée avec succès',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                          ),
+                        ),
+                        if (result.confidence != null)
+                          Text(
+                            'Confiance: ${(result.confidence! * 100).toStringAsFixed(0)}%',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.green[700],
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
-                ),
-                const Spacer(),
-                if (result.confidence != null)
-                  Chip(
-                    label: Text('Confiance: ${(result.confidence! * 100).toStringAsFixed(0)}%'),
-                    backgroundColor: Colors.green[100],
-                  ),
-              ],
+                ],
+              ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             
             // Maladies détectées
             if (result.diseases != null && result.diseases!.isNotEmpty) ...[
