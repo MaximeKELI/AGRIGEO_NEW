@@ -36,5 +36,11 @@ class ApiConstants {
   // Sensors endpoints
   static const String sensors = '/sensors';
   static const String sensorData = '/sensors/data';
+  
+  // Recoltes endpoints
+  static const String recoltes = '/recoltes';
+  static const String recoltesStatistics = '/recoltes/statistics';
+  static const String recoltesPrevision = '/recoltes/prevision';
+  static const String recoltesImport = '/recoltes/import';
 }
 
