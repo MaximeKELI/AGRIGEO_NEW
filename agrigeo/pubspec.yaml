@@ -48,6 +48,10 @@ dependencies:
   # UI Components
   flutter_svg: ^2.0.9
   cached_network_image: ^3.3.1
+  
+  # Export
+  csv: ^5.0.2
+  path_provider: ^2.1.1
 
 dev_dependencies:
   flutter_test:
