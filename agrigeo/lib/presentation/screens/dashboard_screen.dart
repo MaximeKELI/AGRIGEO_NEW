@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 import '../providers/exploitation_provider.dart';
 import '../providers/analyse_sol_provider.dart';
 import '../providers/intrant_provider.dart';
@@ -12,10 +13,11 @@ import 'meteo_screen.dart';
 import 'chat_screen.dart';
 import 'intrants_list_screen.dart';
 import 'image_analysis_screen.dart';
+import 'exploitation_detail_screen.dart';
 import 'add_exploitation_screen.dart';
 import 'add_analyse_sol_screen.dart';
 import 'add_intrant_screen.dart';
-import 'exploitation_detail_screen.dart';
+import 'login_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -135,7 +137,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 icon: Icons.add_business,
                                 color: Colors.green,
                                 onTap: () {
-                                  Navigator.pushNamed(context, '/add-exploitation');
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const AddExploitationScreen(),
+                                    ),
+                                  );
                                 },
                               ),
                               _buildQuickAction(
@@ -143,7 +150,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 icon: Icons.science_outlined,
                                 color: Colors.blue,
                                 onTap: () {
-                                  Navigator.pushNamed(context, '/add-analyse');
+                                  final exploitations = exploitationProvider.exploitations;
+                                  if (exploitations.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Veuillez d\'abord créer une exploitation'),
+                                        backgroundColor: Colors.orange,
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => AddAnalyseSolScreen(
+                                        exploitation: exploitations.first,
+                                      ),
+                                    ),
+                                  );
                                 },
                               ),
                               _buildQuickAction(
@@ -164,7 +188,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 icon: Icons.eco_outlined,
                                 color: Colors.orange,
                                 onTap: () {
-                                  Navigator.pushNamed(context, '/add-intrant');
+                                  final exploitations = exploitationProvider.exploitations;
+                                  if (exploitations.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Veuillez d\'abord créer une exploitation'),
+                                        backgroundColor: Colors.orange,
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => AddIntrantScreen(
+                                        exploitation: exploitations.first,
+                                      ),
+                                    ),
+                                  );
                                 },
                               ),
                             ],
@@ -216,10 +257,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     subtitle: Text('Exploitation créée'),
                                     trailing: const Icon(Icons.chevron_right),
                                     onTap: () {
-                                      Navigator.pushNamed(
+                                      Navigator.push(
                                         context,
-                                        '/exploitation-detail',
-                                        arguments: exploitation.id,
+                                        MaterialPageRoute(
+                                          builder: (_) => ExploitationDetailScreen(
+                                            exploitation: exploitation,
+                                          ),
+                                        ),
                                       );
                                     },
                                   ),
@@ -257,7 +301,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(icon, color: color, size: 32),
@@ -305,9 +349,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         width: 150,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -367,7 +411,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Text(
                   'Gestion intelligente des sols',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     fontSize: 14,
                   ),
                 ),
@@ -484,7 +528,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       ),
       selected: isSelected,
-      selectedTileColor: Colors.green.withOpacity(0.1),
+          selectedTileColor: Colors.green.withValues(alpha: 0.1),
       onTap: () => _onItemTapped(index),
     );
   }
