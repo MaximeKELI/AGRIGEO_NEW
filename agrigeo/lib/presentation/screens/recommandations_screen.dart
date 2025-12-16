@@ -25,87 +25,89 @@ class RecommandationsScreen extends StatelessWidget {
         final recommandations = provider.recommandations;
 
         return Scaffold(
-      appBar: AppBar(
-        title: const Text('Recommandations'),
-        actions: [
-          if (exploitation != null)
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: provider.isGenerating
-                  ? null
-                  : () async {
-                      final success = await provider.generateRecommandations(exploitation!.id);
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(success
-                                ? 'Recommandations générées avec succès'
-                                : provider.error ?? 'Erreur lors de la génération'),
-                            backgroundColor: success ? Colors.green : Colors.red,
+          appBar: AppBar(
+            title: const Text('Recommandations'),
+            actions: [
+              if (exploitation != null)
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: provider.isGenerating
+                      ? null
+                      : () async {
+                          final success = await provider.generateRecommandations(exploitation!.id);
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(success
+                                    ? 'Recommandations générées avec succès'
+                                    : provider.error ?? 'Erreur lors de la génération'),
+                                backgroundColor: success ? Colors.green : Colors.red,
+                              ),
+                            );
+                          }
+                        },
+                  tooltip: 'Générer des recommandations',
+                ),
+            ],
+          ),
+          body: provider.isGenerating
+              ? const Center(child: CircularProgressIndicator())
+              : recommandations.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.lightbulb_outline, size: 64, color: Colors.grey),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Aucune recommandation',
+                            style: TextStyle(fontSize: 18, color: Colors.grey),
                           ),
-                        );
-                      }
-                    },
-              tooltip: 'Générer des recommandations',
-            ),
-        ],
-      ),
-      body: provider.isGenerating
-          ? const Center(child: CircularProgressIndicator())
-          : recommandations.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.lightbulb_outline, size: 64, color: Colors.grey),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Aucune recommandation',
-                    style: TextStyle(fontSize: 18, color: Colors.grey),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Générez des recommandations basées sur vos données',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                  if (exploitation != null) ...[
-                    const SizedBox(height: 24),
-                    ElevatedButton.icon(
-                      onPressed: provider.isGenerating
-                          ? null
-                          : () async {
-                              final success = await provider.generateRecommandations(exploitation!.id);
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(success
-                                        ? 'Recommandations générées avec succès'
-                                        : provider.error ?? 'Erreur'),
-                                    backgroundColor: success ? Colors.green : Colors.red,
-                                  ),
-                                );
-                              }
-                            },
-                      icon: const Icon(Icons.auto_awesome),
-                      label: const Text('Générer des recommandations'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Générez des recommandations basées sur vos données',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                          if (exploitation != null) ...[
+                            const SizedBox(height: 24),
+                            ElevatedButton.icon(
+                              onPressed: provider.isGenerating
+                                  ? null
+                                  : () async {
+                                      final success = await provider.generateRecommandations(exploitation!.id);
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text(success
+                                                ? 'Recommandations générées avec succès'
+                                                : provider.error ?? 'Erreur'),
+                                            backgroundColor: success ? Colors.green : Colors.red,
+                                          ),
+                                        );
+                                      }
+                                    },
+                              icon: const Icon(Icons.auto_awesome),
+                              label: const Text('Générer des recommandations'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: recommandations.length,
+                      itemBuilder: (context, index) {
+                        final rec = recommandations[index];
+                        return _buildRecommandationCard(context, rec);
+                      },
                     ),
-                  ],
-                ],
-              ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: recommandations.length,
-              itemBuilder: (context, index) {
-                final rec = recommandations[index];
-                return _buildRecommandationCard(context, rec);
-              },
-            ),
+        );
+      },
     );
   }
 

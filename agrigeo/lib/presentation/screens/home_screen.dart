@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.farm),
+            icon: Icon(Icons.agriculture),
             label: 'Exploitations',
           ),
           BottomNavigationBarItem(
