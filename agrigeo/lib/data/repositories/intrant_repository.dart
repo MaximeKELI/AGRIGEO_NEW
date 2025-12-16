@@ -1,3 +1,4 @@
+import 'dart:convert';
 import '../../core/errors/failures.dart';
 import '../datasources/api_service.dart';
 import '../datasources/local_database.dart';
@@ -40,7 +41,20 @@ class IntrantRepository {
       final localData = await _localDb.getIntrants(
         exploitationId: exploitationId,
       );
-      return localData.map((json) => IntrantModel.fromJson(json)).toList();
+      return localData.map((json) {
+        return IntrantModel.fromJson({
+          'id': json['id'],
+          'type_intrant': json['type_intrant'],
+          'nom_commercial': json['nom_commercial'],
+          'quantite': json['quantite'],
+          'unite': json['unite'] ?? 'kg',
+          'date_application': json['date_application'],
+          'culture_concernée': json['culture_concernée'],
+          'exploitation_id': json['exploitation_id'],
+          'parcelle_id': json['parcelle_id'],
+          'created_at': json['created_at'],
+        });
+      }).toList();
     } catch (e) {
       if (e is Failure) rethrow;
       throw ServerFailure(e.toString());
