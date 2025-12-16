@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../providers/chat_provider.dart';
-import '../providers/exploitation_provider.dart';
 import '../providers/analyse_sol_provider.dart';
 import '../providers/meteo_provider.dart';
 import '../../data/models/exploitation_model.dart';
@@ -60,7 +59,7 @@ class _ChatScreenState extends State<ChatScreen> {
       final analyseProvider = Provider.of<AnalyseSolProvider>(context, listen: false);
       if (analyseProvider.analyses.isNotEmpty) {
         final derniereAnalyse = analyseProvider.analyses.first;
-        contextData!['derniere_analyse'] = {
+        contextData['derniere_analyse'] = {
           'ph': derniereAnalyse.ph,
           'azote_n': derniereAnalyse.azoteN,
           'phosphore_p': derniereAnalyse.phosphoreP,
@@ -72,7 +71,7 @@ class _ChatScreenState extends State<ChatScreen> {
       final meteoProvider = Provider.of<MeteoProvider>(context, listen: false);
       if (meteoProvider.meteoActuelle != null) {
         final meteo = meteoProvider.meteoActuelle!;
-        contextData!['meteo'] = {
+        contextData['meteo'] = {
           'temperature': meteo.temperature,
           'pluviometrie': meteo.pluviometrie,
           'humidite': meteo.humidite,
@@ -113,6 +112,13 @@ class _ChatScreenState extends State<ChatScreen> {
           ],
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              _showApiKeyDialog(context);
+            },
+            tooltip: 'Configurer la clé API',
+          ),
           IconButton(
             icon: const Icon(Icons.delete_outline),
             onPressed: () {
@@ -189,7 +195,7 @@ class _ChatScreenState extends State<ChatScreen> {
               color: Theme.of(context).scaffoldBackgroundColor,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 4,
                   offset: const Offset(0, -2),
                 ),
@@ -323,6 +329,63 @@ class _ChatScreenState extends State<ChatScreen> {
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  void _showApiKeyDialog(BuildContext context) {
+    final apiKeyController = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Configurer la clé API Gemini'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Entrez votre clé API Gemini pour activer le chatbot.',
+              style: TextStyle(fontSize: 14),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: apiKeyController,
+              decoration: const InputDecoration(
+                labelText: 'Clé API',
+                hintText: 'AIzaSy...',
+                border: OutlineInputBorder(),
+              ),
+              obscureText: true,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Obtenez votre clé API sur: https://aistudio.google.com/app/apikey',
+              style: TextStyle(fontSize: 12, color: Colors.blue),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (apiKeyController.text.trim().isNotEmpty) {
+                Provider.of<ChatProvider>(context, listen: false)
+                    .setApiKey(apiKeyController.text.trim());
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Clé API configurée avec succès'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
+            },
+            child: const Text('Enregistrer'),
+          ),
+        ],
       ),
     );
   }
