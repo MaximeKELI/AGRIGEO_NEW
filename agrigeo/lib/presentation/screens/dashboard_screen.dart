@@ -542,6 +542,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  Color _getColorForCulture(String culture) {
+    final colors = [
+      Colors.green,
+      Colors.blue,
+      Colors.orange,
+      Colors.purple,
+      Colors.red,
+      Colors.teal,
+      Colors.amber,
+      Colors.indigo,
+    ];
+    return colors[culture.hashCode % colors.length];
+  }
+
   Widget _getScreenForIndex(int index) {
     switch (index) {
       case 0:
@@ -560,6 +574,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return const ImageAnalysisScreen();
       case 7:
         return const ChatScreen();
+      case 8:
+        return const RecoltesScreen();
       default:
         return _buildDashboard();
     }
