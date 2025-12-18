@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'lib/presentation/providers/meteo_provider.dart';
 import 'lib/presentation/providers/exploitation_provider.dart';
-import 'lib/presentation/screens/meteo_screen.dart';
-import 'lib/data/models/exploitation_model.dart';
 
 void main() {
   runApp(const MeteoDemoApp());
@@ -343,9 +341,9 @@ class _MeteoTestScreenState extends State<MeteoTestScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Prévisions (${previsions.length} périodes)',
-                                style: TextStyle(
+                              Text(
+                                'Prévisions (${provider.previsions.length} périodes)',
+                                style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
