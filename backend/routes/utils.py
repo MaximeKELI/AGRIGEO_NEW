@@ -34,3 +34,6 @@ def paginate_query(query, page, per_page):
         'has_prev': pagination.has_prev,
     }
 
+
+
+

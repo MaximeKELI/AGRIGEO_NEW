@@ -349,3 +349,6 @@ class MyAnalysisWidget extends StatelessWidget {
 4. Alertes automatiques pour maladies critiques
 5. Intégration avec le système de recommandations existant
 
+
+
+

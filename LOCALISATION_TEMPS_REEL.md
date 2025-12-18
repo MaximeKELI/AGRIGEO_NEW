@@ -259,3 +259,6 @@ if (location != null) {
 - Le suivi en temps réel consomme de la batterie, utiliser avec modération
 - Toujours arrêter le suivi quand il n'est plus nécessaire
 
+
+
+

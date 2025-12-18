@@ -188,3 +188,6 @@ def generate_recommandations(exploitation_id):
     
     return recommandations
 
+
+
+

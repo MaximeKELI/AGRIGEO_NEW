@@ -176,3 +176,6 @@ class SensorModel {
   Map<String, dynamic> toJson() => _$SensorModelToJson(this);
 }
 
+
+
+

@@ -120,3 +120,6 @@ class AnalyseSolProvider with ChangeNotifier {
   }
 }
 
+
+
+

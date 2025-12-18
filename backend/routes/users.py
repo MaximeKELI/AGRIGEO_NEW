@@ -72,3 +72,6 @@ def create_role():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
+
+
+

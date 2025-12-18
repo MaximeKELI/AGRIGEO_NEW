@@ -220,3 +220,6 @@ def get_hierarchie_complete():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+
+

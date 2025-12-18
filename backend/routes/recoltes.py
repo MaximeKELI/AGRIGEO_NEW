@@ -377,3 +377,6 @@ def delete_recolte(recolte_id):
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
+
+
+

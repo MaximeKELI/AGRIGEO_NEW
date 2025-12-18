@@ -110,3 +110,6 @@
   - Option A : Ajouter @JsonKey dans tous les modèles frontend (recommandé)
   - Option B : Modifier le backend pour renvoyer camelCase (non recommandé, casse la convention Python)
 
+
+
+

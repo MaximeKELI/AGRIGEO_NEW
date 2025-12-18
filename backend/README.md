@@ -121,3 +121,6 @@ La base de données SQLite est créée automatiquement au premier lancement dans
 
 Pour réinitialiser la base de données, supprimez le fichier `agrigeo.db` et relancez l'application.
 
+
+
+

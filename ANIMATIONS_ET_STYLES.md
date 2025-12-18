@@ -298,3 +298,6 @@ AnimatedButton(
 - [ ] Transitions de page personnalisées supplémentaires
 - [ ] Animations basées sur les préférences utilisateur
 
+
+
+

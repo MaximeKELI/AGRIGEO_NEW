@@ -77,3 +77,6 @@ Plusieurs fichiers ont des imports inutilisés (warnings uniquement, non bloquan
 - Le frontend utilise camelCase (convention Dart)
 - La conversion est transparente grâce aux annotations
 
+
+
+

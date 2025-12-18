@@ -109,3 +109,6 @@ class PolygonSatelliteData {
   Map<String, dynamic> toJson() => _$PolygonSatelliteDataToJson(this);
 }
 
+
+
+

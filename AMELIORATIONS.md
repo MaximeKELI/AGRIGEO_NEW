@@ -241,3 +241,6 @@ Pour mesurer l'efficacité des améliorations :
 11. Performance et optimisation
 12. Features additionnelles
 
+
+
+

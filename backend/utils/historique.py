@@ -22,3 +22,6 @@ def log_action(user_id, action, entite, entite_id, details=None):
         print(f"Erreur lors de l'enregistrement de l'historique: {e}")
         db.session.rollback()
 
+
+
+

@@ -75,3 +75,6 @@ La base de données sera créée automatiquement au premier démarrage.
 - Le serveur doit être démarré avant de lancer l'application Flutter
 - Les modifications du code nécessitent un redémarrage du serveur
 
+
+
+

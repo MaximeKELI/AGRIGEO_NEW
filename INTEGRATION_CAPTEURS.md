@@ -295,3 +295,6 @@ final response = await apiService.createAnalyseSol(analyseData);
 - [ ] Ajouter l'authentification par API key pour les capteurs
 - [ ] Créer un dashboard de monitoring des capteurs
 
+
+
+

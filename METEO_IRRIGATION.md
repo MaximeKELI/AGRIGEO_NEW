@@ -160,3 +160,6 @@ Chaque conseil indique les paramètres utilisés pour sa génération :
 - Intégration avec système d'irrigation automatique
 - Statistiques d'irrigation
 
+
+
+

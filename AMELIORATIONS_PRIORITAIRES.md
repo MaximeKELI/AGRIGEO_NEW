@@ -249,3 +249,6 @@ SnackBar(
 - Mesurer l'**impact** de chaque amélioration
 - **Itérer** rapidement et ajuster selon feedback
 
+
+
+

@@ -143,3 +143,6 @@ Tous les modèles utilisent `json_serializable` pour la sérialisation JSON :
 5. Compléter la couche domain (entities, usecases)
 6. Ajouter les tests unitaires et d'intégration
 
+
+
+

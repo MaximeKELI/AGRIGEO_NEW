@@ -149,3 +149,6 @@ Les polygones OpenWeather Agro peuvent être associés aux exploitations de l'ap
 - Le polygone doit être fermé (le dernier point doit être identique au premier)
 - Les données satellite peuvent avoir des délais de disponibilité
 
+
+
+

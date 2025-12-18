@@ -92,3 +92,6 @@ Les tests nécessitent :
 - Les tests de providers testent la logique métier
 - Les tests de repositories testent l'intégration avec les services
 
+
+
+

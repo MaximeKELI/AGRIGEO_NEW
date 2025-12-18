@@ -190,3 +190,6 @@ class ComparaisonRegionItemModel {
   Map<String, dynamic> toJson() => _$ComparaisonRegionItemModelToJson(this);
 }
 
+
+
+

@@ -73,3 +73,6 @@ class PrevisionMeteoModel {
   Map<String, dynamic> toJson() => _$PrevisionMeteoModelToJson(this);
 }
 
+
+
+

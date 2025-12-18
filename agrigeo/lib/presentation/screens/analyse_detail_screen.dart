@@ -254,3 +254,6 @@ class AnalyseDetailScreen extends StatelessWidget {
   }
 }
 
+
+
+

@@ -66,3 +66,6 @@ class _TypewriterTextWidgetState extends State<TypewriterTextWidget> {
   }
 }
 
+
+
+

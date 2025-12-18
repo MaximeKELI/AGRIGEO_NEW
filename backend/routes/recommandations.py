@@ -137,3 +137,6 @@ def delete_recommandation(recommandation_id):
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
+
+
+

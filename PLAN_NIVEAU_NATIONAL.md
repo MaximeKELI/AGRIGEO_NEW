@@ -571,3 +571,6 @@ Pour passer au niveau national, AGRIGEO doit devenir une **plateforme complète*
 
 Cette évolution transformera AGRIGEO en un **outil stratégique** pour la politique agricole nationale du Togo.
 
+
+
+
