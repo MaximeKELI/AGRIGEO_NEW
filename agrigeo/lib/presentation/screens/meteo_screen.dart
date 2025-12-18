@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/meteo_provider.dart';
+import '../providers/exploitation_provider.dart';
 import '../../data/models/exploitation_model.dart';
 import '../../core/constants/app_constants.dart';
 import 'conseils_irrigation_screen.dart';
@@ -21,23 +22,62 @@ class MeteoScreen extends StatefulWidget {
 }
 
 class _MeteoScreenState extends State<MeteoScreen> {
+  ExploitationModel? _currentExploitation;
+
   @override
   void initState() {
     super.initState();
+    _initializeExploitation();
     _checkAndLoadApiKey();
+  }
+
+  void _initializeExploitation() {
+    // Si une exploitation est passée en paramètre, l'utiliser
+    if (widget.exploitation != null) {
+      _currentExploitation = widget.exploitation;
+      return;
+    }
+
+    // Sinon, récupérer la première exploitation disponible avec coordonnées GPS
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final exploitationProvider = Provider.of<ExploitationProvider>(context, listen: false);
+      if (exploitationProvider.exploitations.isEmpty) {
+        exploitationProvider.loadExploitations().then((_) {
+          if (mounted && exploitationProvider.exploitations.isNotEmpty) {
+            final exploitation = exploitationProvider.exploitations.firstWhere(
+              (e) => e.latitude != null && e.longitude != null,
+              orElse: () => exploitationProvider.exploitations.first,
+            );
+            setState(() {
+              _currentExploitation = exploitation;
+            });
+            _checkAndLoadApiKey();
+          }
+        });
+      } else {
+        final exploitation = exploitationProvider.exploitations.firstWhere(
+          (e) => e.latitude != null && e.longitude != null,
+          orElse: () => exploitationProvider.exploitations.first,
+        );
+        setState(() {
+          _currentExploitation = exploitation;
+        });
+      }
+    });
   }
 
   Future<void> _checkAndLoadApiKey() async {
     final prefs = await SharedPreferences.getInstance();
     final apiKey = prefs.getString(AppConstants.openWeatherApiKey);
-    if (apiKey != null) {
+    if (apiKey != null && mounted) {
       Provider.of<MeteoProvider>(context, listen: false).setApiKey(apiKey);
       
-      // Charger la météo si exploitation disponible
-      if (widget.exploitation?.latitude != null && widget.exploitation?.longitude != null) {
+      // Charger la météo si exploitation disponible avec coordonnées GPS
+      final exploitation = _currentExploitation ?? widget.exploitation;
+      if (exploitation != null && exploitation.latitude != null && exploitation.longitude != null && mounted) {
         Provider.of<MeteoProvider>(context, listen: false).loadMeteoComplete(
-          latitude: widget.exploitation!.latitude!,
-          longitude: widget.exploitation!.longitude!,
+          latitude: exploitation.latitude!,
+          longitude: exploitation.longitude!,
         );
       }
     }
@@ -45,9 +85,22 @@ class _MeteoScreenState extends State<MeteoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final exploitation = widget.exploitation;
+    return Consumer<ExploitationProvider>(
+      builder: (context, exploitationProvider, _) {
+        // Utiliser l'exploitation passée en paramètre ou la première disponible avec coordonnées GPS
+        ExploitationModel? exploitation = _currentExploitation ?? widget.exploitation;
+        if (exploitation == null && exploitationProvider.exploitations.isNotEmpty) {
+          try {
+            exploitation = exploitationProvider.exploitations.firstWhere(
+              (e) => e.latitude != null && e.longitude != null,
+            );
+          } catch (e) {
+            // Aucune exploitation avec coordonnées GPS, prendre la première disponible
+            exploitation = exploitationProvider.exploitations.first;
+          }
+        }
 
-    return Scaffold(
+        return Scaffold(
       appBar: AppBar(
         title: const Text('Météo'),
         actions: [
@@ -60,13 +113,14 @@ class _MeteoScreenState extends State<MeteoScreen> {
             },
             tooltip: 'Configuration',
           ),
-          if (exploitation != null && exploitation!.latitude != null && exploitation!.longitude != null)
+          if (exploitation != null && exploitation.latitude != null && exploitation.longitude != null)
             IconButton(
               icon: const Icon(Icons.refresh),
               onPressed: () {
+                final exp = exploitation!;
                 Provider.of<MeteoProvider>(context, listen: false).loadMeteoComplete(
-                  latitude: exploitation!.latitude!,
-                  longitude: exploitation!.longitude!,
+                  latitude: exp.latitude!,
+                  longitude: exp.longitude!,
                 );
               },
             ),
@@ -107,7 +161,7 @@ class _MeteoScreenState extends State<MeteoScreen> {
             );
           }
 
-          if (exploitation == null || exploitation!.latitude == null || exploitation!.longitude == null) {
+          if (exploitation == null || exploitation.latitude == null || exploitation.longitude == null) {
             return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -129,9 +183,11 @@ class _MeteoScreenState extends State<MeteoScreen> {
             );
           }
 
-          return _buildMeteoContent(exploitation!);
+          return _buildMeteoContent(exploitation);
         },
       ),
+        );
+      },
     );
   }
 
