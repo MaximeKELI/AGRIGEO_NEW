@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from database import db
 from models.region import Region, Prefecture, Commune
 from models.exploitation import Exploitation
-from routes.utils import log_action
+from utils.historique import log_action
 
 geographie_bp = Blueprint('geographie', __name__)
 

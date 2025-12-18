@@ -1,0 +1,797 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "AGRIGEO API",
+    "description": "API REST Flask pour la plateforme AGRIGEO - Application de gestion intelligente des sols et optimisation des pratiques agricoles",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api",
+      "description": "Serveur de développement"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Vérification de santé de l'API",
+        "description": "Endpoint de vérification de santé de l'API",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API opérationnelle",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "AGRIGEO API is running"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": ["Authentification"],
+        "summary": "Enregistrement d'un nouvel utilisateur",
+        "description": "Crée un nouveau compte utilisateur",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["username", "email", "password", "role_id"],
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "role_id": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Utilisateur créé avec succès"
+          },
+          "400": {
+            "description": "Erreur de validation"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Authentification"],
+        "summary": "Connexion",
+        "description": "Authentifie un utilisateur et retourne un token JWT",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["username", "password"],
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Connexion réussie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identifiants invalides"
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": ["Authentification"],
+        "summary": "Informations de l'utilisateur connecté",
+        "description": "Retourne les informations de l'utilisateur actuellement authentifié",
+        "responses": {
+          "200": {
+            "description": "Informations utilisateur"
+          },
+          "401": {
+            "description": "Non authentifié"
+          }
+        }
+      }
+    },
+    "/auth/roles": {
+      "get": {
+        "tags": ["Authentification"],
+        "summary": "Liste des rôles disponibles",
+        "description": "Retourne la liste de tous les rôles disponibles pour l'inscription",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Liste des rôles"
+          }
+        }
+      }
+    },
+    "/exploitations": {
+      "get": {
+        "tags": ["Exploitations"],
+        "summary": "Liste des exploitations",
+        "description": "Retourne la liste de toutes les exploitations",
+        "responses": {
+          "200": {
+            "description": "Liste des exploitations"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Exploitations"],
+        "summary": "Créer une exploitation",
+        "description": "Crée une nouvelle exploitation",
+        "responses": {
+          "201": {
+            "description": "Exploitation créée avec succès"
+          }
+        }
+      }
+    },
+    "/exploitations/{id}": {
+      "get": {
+        "tags": ["Exploitations"],
+        "summary": "Détails d'une exploitation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Détails de l'exploitation"
+          },
+          "404": {
+            "description": "Exploitation non trouvée"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Exploitations"],
+        "summary": "Mettre à jour une exploitation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Exploitation mise à jour"
+          },
+          "404": {
+            "description": "Exploitation non trouvée"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Exploitations"],
+        "summary": "Supprimer une exploitation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Exploitation supprimée"
+          },
+          "404": {
+            "description": "Exploitation non trouvée"
+          }
+        }
+      }
+    },
+    "/meteo/actuelle": {
+      "get": {
+        "tags": ["Météo"],
+        "summary": "Météo actuelle",
+        "description": "Récupère la météo actuelle par coordonnées ou par exploitation",
+        "parameters": [
+          {
+            "name": "latitude",
+            "in": "query",
+            "description": "Latitude en degrés décimaux",
+            "schema": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          {
+            "name": "longitude",
+            "in": "query",
+            "description": "Longitude en degrés décimaux",
+            "schema": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          {
+            "name": "exploitation_id",
+            "in": "query",
+            "description": "ID de l'exploitation (alternative aux coordonnées)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Données météo actuelles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "meteo": {
+                      "type": "object"
+                    },
+                    "exploitation_id": {
+                      "type": "integer",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Coordonnées manquantes ou invalides"
+          },
+          "404": {
+            "description": "Exploitation non trouvée"
+          }
+        }
+      }
+    },
+    "/meteo/previsions": {
+      "get": {
+        "tags": ["Météo"],
+        "summary": "Prévisions météo",
+        "description": "Récupère les prévisions météo pour les 5 prochains jours par coordonnées ou par exploitation",
+        "parameters": [
+          {
+            "name": "latitude",
+            "in": "query",
+            "description": "Latitude en degrés décimaux",
+            "schema": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          {
+            "name": "longitude",
+            "in": "query",
+            "description": "Longitude en degrés décimaux",
+            "schema": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          {
+            "name": "exploitation_id",
+            "in": "query",
+            "description": "ID de l'exploitation (alternative aux coordonnées)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Prévisions météo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "previsions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "exploitation_id": {
+                      "type": "integer",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Coordonnées manquantes ou invalides"
+          },
+          "404": {
+            "description": "Exploitation non trouvée"
+          }
+        }
+      }
+    },
+    "/meteo/test/ville": {
+      "get": {
+        "tags": ["Météo"],
+        "summary": "Test météo par ville (PUBLIC)",
+        "description": "Endpoint public de test pour récupérer la météo par nom de ville (sans authentification)",
+        "security": [],
+        "parameters": [
+          {
+            "name": "ville",
+            "in": "query",
+            "required": true,
+            "description": "Nom de la ville",
+            "schema": {
+              "type": "string",
+              "example": "Paris"
+            }
+          },
+          {
+            "name": "pays",
+            "in": "query",
+            "description": "Code pays (optionnel, ex: FR, US)",
+            "schema": {
+              "type": "string",
+              "example": "FR"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Données météo de la ville",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "meteo": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Paramètre ville manquant"
+          }
+        }
+      }
+    },
+    "/meteo/test/coord": {
+      "get": {
+        "tags": ["Météo"],
+        "summary": "Test météo par coordonnées (PUBLIC)",
+        "description": "Endpoint public de test pour récupérer la météo par coordonnées GPS (sans authentification)",
+        "security": [],
+        "parameters": [
+          {
+            "name": "latitude",
+            "in": "query",
+            "required": true,
+            "description": "Latitude en degrés décimaux",
+            "schema": {
+              "type": "number",
+              "format": "float",
+              "example": 48.8566
+            }
+          },
+          {
+            "name": "longitude",
+            "in": "query",
+            "required": true,
+            "description": "Longitude en degrés décimaux",
+            "schema": {
+              "type": "number",
+              "format": "float",
+              "example": 2.3522
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Données météo pour les coordonnées",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "meteo": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Coordonnées manquantes ou invalides"
+          }
+        }
+      }
+    },
+    "/meteo/test/previsions": {
+      "get": {
+        "tags": ["Météo"],
+        "summary": "Test prévisions météo par coordonnées (PUBLIC)",
+        "description": "Endpoint public de test pour récupérer les prévisions météo par coordonnées GPS (sans authentification)",
+        "security": [],
+        "parameters": [
+          {
+            "name": "latitude",
+            "in": "query",
+            "required": true,
+            "description": "Latitude en degrés décimaux",
+            "schema": {
+              "type": "number",
+              "format": "float",
+              "example": 48.8566
+            }
+          },
+          {
+            "name": "longitude",
+            "in": "query",
+            "required": true,
+            "description": "Longitude en degrés décimaux",
+            "schema": {
+              "type": "number",
+              "format": "float",
+              "example": 2.3522
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Prévisions météo pour les coordonnées",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "previsions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Coordonnées manquantes ou invalides"
+          }
+        }
+      }
+    },
+    "/meteo/ville": {
+      "get": {
+        "tags": ["Météo"],
+        "summary": "Météo par ville",
+        "description": "Récupère la météo actuelle par nom de ville",
+        "parameters": [
+          {
+            "name": "ville",
+            "in": "query",
+            "required": true,
+            "description": "Nom de la ville",
+            "schema": {
+              "type": "string",
+              "example": "Paris"
+            }
+          },
+          {
+            "name": "pays",
+            "in": "query",
+            "description": "Code pays (optionnel, ex: FR, US)",
+            "schema": {
+              "type": "string",
+              "example": "FR"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Données météo de la ville",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "meteo": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Paramètre ville manquant"
+          },
+          "404": {
+            "description": "Ville non trouvée"
+          }
+        }
+      }
+    },
+    "/meteo/complete/{exploitation_id}": {
+      "get": {
+        "tags": ["Météo"],
+        "summary": "Météo complète pour une exploitation",
+        "description": "Récupère la météo actuelle et les prévisions pour une exploitation",
+        "parameters": [
+          {
+            "name": "exploitation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Météo actuelle et prévisions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "meteo_actuelle": {
+                      "type": "object"
+                    },
+                    "previsions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "exploitation_id": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Coordonnées GPS non définies"
+          },
+          "404": {
+            "description": "Exploitation non trouvée"
+          }
+        }
+      }
+    },
+    "/meteo/conseils-irrigation/{exploitation_id}": {
+      "get": {
+        "tags": ["Météo"],
+        "summary": "Conseils d'irrigation (GET)",
+        "description": "Génère des conseils d'irrigation basés sur la météo actuelle (récupérée automatiquement depuis OpenWeather)",
+        "parameters": [
+          {
+            "name": "exploitation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Conseils d'irrigation avec météo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "conseils": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "exploitation_id": {
+                      "type": "integer"
+                    },
+                    "meteo_actuelle": {
+                      "type": "object"
+                    },
+                    "previsions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Coordonnées GPS non définies"
+          },
+          "404": {
+            "description": "Exploitation non trouvée"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Météo"],
+        "summary": "Conseils d'irrigation (POST)",
+        "description": "Génère des conseils d'irrigation basés sur les données météo fournies ou récupère automatiquement depuis OpenWeather si non fournies",
+        "parameters": [
+          {
+            "name": "exploitation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "meteo_actuelle": {
+                    "type": "object",
+                    "description": "Données météo actuelles (optionnel, récupérées automatiquement si absent)"
+                  },
+                  "previsions": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Prévisions météo (optionnel)"
+                  },
+                  "derniere_pluviometrie": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "Dernière pluviométrie enregistrée en mm (optionnel)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Conseils d'irrigation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "conseils": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "exploitation_id": {
+                      "type": "integer"
+                    },
+                    "meteo_actuelle": {
+                      "type": "object"
+                    },
+                    "previsions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Coordonnées GPS non définies ou données invalides"
+          },
+          "404": {
+            "description": "Exploitation non trouvée"
+          }
+        }
+      }
+    }
+  }
+}

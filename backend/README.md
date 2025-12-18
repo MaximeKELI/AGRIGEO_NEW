@@ -21,6 +21,20 @@ cp .env.example .env
 # Éditer .env avec vos valeurs
 ```
 
+   Variables d'environnement requises :
+   - `OPENWEATHER_API_KEY` : Clé API OpenWeatherMap (obtenue sur https://openweathermap.org/api)
+   - `SECRET_KEY` : Clé secrète Flask (pour la session)
+   - `JWT_SECRET_KEY` : Clé secrète JWT (pour les tokens)
+   - `DATABASE_URL` : URL de la base de données (par défaut: sqlite:///agrigeo.db)
+   
+   Exemple de fichier `.env` :
+   ```env
+   OPENWEATHER_API_KEY=votre_cle_api_openweather
+   SECRET_KEY=votre_secret_key
+   JWT_SECRET_KEY=votre_jwt_secret_key
+   DATABASE_URL=sqlite:///agrigeo.db
+   ```
+
 4. Lancer le serveur :
 ```bash
 python app.py
@@ -52,7 +66,9 @@ backend/
 │   ├── intrants.py
 │   └── recommandations.py
 ├── services/              # Logique métier
-│   └── recommandation_service.py
+│   ├── recommandation_service.py
+│   ├── irrigation_service.py
+│   └── meteo_service.py
 └── utils/                 # Utilitaires
     ├── validators.py
     └── historique.py
@@ -83,6 +99,16 @@ backend/
 - `GET /api/recommandations` - Liste des recommandations
 - `POST /api/recommandations/generate/<exploitation_id>` - Générer des recommandations
 - `PUT /api/recommandations/<id>/status` - Mettre à jour le statut
+
+### Météo (OpenWeatherMap)
+- `GET /api/meteo/actuelle?latitude=X&longitude=Y` - Météo actuelle par coordonnées
+- `GET /api/meteo/actuelle?exploitation_id=X` - Météo actuelle pour une exploitation
+- `GET /api/meteo/previsions?latitude=X&longitude=Y` - Prévisions météo par coordonnées
+- `GET /api/meteo/previsions?exploitation_id=X` - Prévisions météo pour une exploitation
+- `GET /api/meteo/ville?ville=Paris&pays=FR` - Météo actuelle par nom de ville
+- `GET /api/meteo/complete/<exploitation_id>` - Météo actuelle + prévisions pour une exploitation
+- `GET /api/meteo/conseils-irrigation/<exploitation_id>` - Conseils d'irrigation avec météo automatique
+- `POST /api/meteo/conseils-irrigation/<exploitation_id>` - Conseils d'irrigation avec météo fournie
 
 ## Documentation Swagger
 
